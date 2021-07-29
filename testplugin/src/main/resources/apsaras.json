@@ -1,0 +1,14 @@
+{
+  "name": "test-plugin",
+  "main": "org.apsarasmc.testplugin.TestCore",
+  "depends": [
+    {
+      "type": "SOFT",
+      "name": "not a plugin"
+    },
+    {
+      "type": "LIBRARY",
+      "name": "com.google.code.gson:gson:2.8.7"
+    }
+  ]
+}

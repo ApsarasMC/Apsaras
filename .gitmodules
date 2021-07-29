@@ -1,0 +1,3 @@
+[submodule "apsaras"]
+	path = apsaras
+	url = git@github.com:ApsarasMC/Apsaras.git

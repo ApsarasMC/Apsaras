@@ -1,0 +1,7 @@
+include 'core'
+include 'apsaras'
+include 'spigot'
+include 'sponge'
+include 'testplugin'
+include 'spigot-loader'
+include 'sponge-loader'
