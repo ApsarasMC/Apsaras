@@ -1,21 +1,27 @@
-plugins {
-  id 'maven-publish'
-}
-
-repositories {
-  mavenCentral()
-}
-
 group = 'org.apsaras'
 version = '1.0-SNAPSHOT'
+
 subprojects {
   apply plugin: 'java'
+  apply plugin: 'maven-publish'
   sourceCompatibility = '1.8'
   targetCompatibility = '1.8'
 
+  group rootProject.group
   version rootProject.version
 
   repositories {
     mavenCentral()
+  }
+
+  publishing {
+    publications {
+      maven(MavenPublication) {
+        groupId project.group
+        artifactId project.name
+        version project.version
+        from components.java
+      }
+    }
   }
 }
