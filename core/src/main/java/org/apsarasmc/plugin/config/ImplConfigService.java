@@ -5,8 +5,7 @@ import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.FileReader;
@@ -27,7 +26,7 @@ public class ImplConfigService< T > implements ConfigService< T > {
     dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
 
     yaml = new Yaml(
-      new Constructor(),
+      new CustomClassLoaderConstructor(configClass, configClass.getClassLoader()),
       new ApsarasRepresenter(),
       dumperOptions,
       new LoaderOptions(),
@@ -41,14 +40,13 @@ public class ImplConfigService< T > implements ConfigService< T > {
     if (!path.toFile().exists()) {
       save(configClass.getConstructor().newInstance());
     }
-    return yaml.loadAs(new FileReader(path.toFile()), configClass);
+    return yaml.load(new FileReader(path.toFile()));
   }
 
   @Override
   public void save(final T object) throws Exception {
     try (FileWriter fileWriter = new FileWriter(path.toFile())) {
-      fileWriter.write(yaml.dumpAs(object, Tag.MAP, DumperOptions.FlowStyle.AUTO));
-      fileWriter.flush();
+      yaml.dump(object, fileWriter);
     }
   }
 
