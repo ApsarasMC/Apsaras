@@ -9,82 +9,91 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class JavaPluginLoader extends URLClassLoader {
-    private static final Collection<String> neverLoadCollection;
-    static {
-        Collection<String> neverLoadPrefixes = new ArrayList<>();
-        neverLoadPrefixes.add("org.apsarasmc.plugin");
-        neverLoadPrefixes.add("org.apsarasmc.sponge");
-        neverLoadPrefixes.add("org.apsarasmc.spigot");
-        neverLoadPrefixes.add("org.apsarasmc.loader");
-        neverLoadCollection = Collections.unmodifiableCollection(neverLoadPrefixes);
-    }
+  private static final Collection< String > neverLoadCollection;
 
-    private final Collection<ClassLoader> depends = new ArrayList<>();
+  static {
+    Collection< String > neverLoadPrefixes = new ArrayList<>();
+    neverLoadPrefixes.add("org.apsarasmc.plugin");
+    neverLoadPrefixes.add("org.apsarasmc.sponge");
+    neverLoadPrefixes.add("org.apsarasmc.spigot");
+    neverLoadPrefixes.add("org.apsarasmc.loader");
+    neverLoadCollection = Collections.unmodifiableCollection(neverLoadPrefixes);
+  }
 
-    public JavaPluginLoader(final URL jarPath, final ClassLoader parent) {
-        super(new URL[]{jarPath},parent);
-    }
+  private final Collection< ClassLoader > depends = new ArrayList<>();
 
-    @Override
-    protected Class<?> loadClass(final String name, final  boolean resolve) throws ClassNotFoundException {
-        synchronized (getClassLoadingLock(name)) {
-            Class<?> c = super.findLoadedClass(name);
-            if (c == null) {
-                try {
-                    return super.findClass(name);
-                } catch (ClassNotFoundException ignore) {
+  public JavaPluginLoader(final URL jarPath, final ClassLoader parent) {
+    super(new URL[] { jarPath }, parent);
+  }
 
-                }
-            }
-            if (c == null) {
-                for (ClassLoader depend : depends) {
-                    try {
-                        c = depend.loadClass(name);
-                        break;
-                    } catch (ClassNotFoundException ignore) {
-
-                    }
-                }
-            }
-            if (c == null) {
-                try {
-                    c = getParent().loadClass(name);
-                } catch (ClassNotFoundException ignore) {
-
-                }
-            }
-            if (c == null) {
-                throw new ClassNotFoundException(name);
-            }
-            if (resolve) {
-                resolveClass(c);
-            }
-            return c;
+  @Override
+  protected Class< ? > loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+    synchronized (getClassLoadingLock(name)) {
+      Class< ? > c = super.findLoadedClass(name);
+      if (c == null) {
+        try {
+          return super.findClass(name);
+        } catch (ClassNotFoundException ignore) {
+          //
         }
-    }
-
-    @Nullable
-    @Override
-    public URL getResource(final String name) {
-        URL u = super.findResource(name);
-        if (u != null) {
-            return u;
-        }
+      }
+      if (c == null) {
         for (ClassLoader depend : depends) {
-            u = depend.getResource(name);
-            if (u != null) {
-                return u;
-            }
+          try {
+            c = depend.loadClass(name);
+            break;
+          } catch (ClassNotFoundException ignore) {
+            //
+          }
         }
-        return getParent().getResource(name);
+      }
+      if (c == null) {
+        try {
+          c = getParent().loadClass(name);
+        } catch (ClassNotFoundException ignore) {
+          //
+        }
+      }
+      if (c == null) {
+        throw new ClassNotFoundException(name);
+      }
+      if (resolve) {
+        resolveClass(c);
+      }
+      return c;
     }
+  }
 
-    public void addDepend(final ClassLoader depend) {
-        this.depends.add(depend);
+  protected void checkNeverLoad(final String name) throws ClassNotFoundException {
+    for (String prefix : neverLoadCollection) {
+      if (name.startsWith(prefix)) {
+        throw new ClassNotFoundException(name);
+      }
     }
+  }
 
-    @Override
-    public void addURL(final URL url) {
-        super.addURL(url);
+  @Nullable
+  @Override
+  public URL getResource(final String name) {
+    URL u = super.findResource(name);
+    if (u != null) {
+      return u;
     }
+    for (ClassLoader depend : depends) {
+      u = depend.getResource(name);
+      if (u != null) {
+        return u;
+      }
+    }
+    return getParent().getResource(name);
+  }
+
+  public void addDepend(final ClassLoader depend) {
+    this.depends.add(depend);
+  }
+
+  @Override
+  public void addURL(final URL url) {
+    super.addURL(url);
+  }
 }

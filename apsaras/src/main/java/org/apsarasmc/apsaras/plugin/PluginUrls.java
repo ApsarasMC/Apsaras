@@ -7,25 +7,25 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface PluginUrls {
-    @Nonnull
-    static Builder builder() {
-        return Apsaras.injector().getInstance(Builder.class);
-    }
+  @Nonnull
+  static Builder builder() {
+    return Apsaras.injector().getInstance(Builder.class);
+  }
 
-    @Nonnull
-    static PluginUrls of(final @Nullable String home, final @Nullable String issue) {
-        return PluginUrls.builder().home(home).issue(issue).build();
-    }
+  @Nonnull
+  static PluginUrls of(final @Nullable String home, final @Nullable String issue) {
+    return PluginUrls.builder().home(home).issue(issue).build();
+  }
 
-    @Nullable
-    String home();
+  @Nullable
+  String home();
 
-    @Nullable
-    String issue();
+  @Nullable
+  String issue();
 
-    interface Builder extends AbstractBuilder<PluginUrls, Builder> {
-        Builder home(String home);
+  interface Builder extends AbstractBuilder< PluginUrls > {
+    Builder home(String home);
 
-        Builder issue(String issue);
-    }
+    Builder issue(String issue);
+  }
 }

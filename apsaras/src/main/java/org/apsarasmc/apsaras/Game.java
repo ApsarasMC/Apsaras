@@ -5,13 +5,13 @@ import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.apsarasmc.apsaras.plugin.PluginManager;
 
 public interface Game {
-    Server server();
+  Server server();
 
-    PluginManager pluginManager();
+  PluginManager pluginManager();
 
-    EventManager eventManager();
+  EventManager eventManager();
 
-    Injector injector();
+  Injector injector();
 
-    PluginContainer self();
+  PluginContainer self();
 }

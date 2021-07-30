@@ -5,11 +5,11 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Handlers implements EventHandler {
-    @Inject
-    private LifeCycleHandler lifeCycle;
+  @Inject
+  private LifeCycleHandler lifeCycle;
 
-    @Override
-    public void register() {
-        lifeCycle.register();
-    }
+  @Override
+  public void register() {
+    lifeCycle.register();
+  }
 }

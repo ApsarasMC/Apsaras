@@ -4,8 +4,8 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Handlers implements EventHandler {
-    @Override
-    public void register() {
+  @Override
+  public void register() {
 
-    }
+  }
 }

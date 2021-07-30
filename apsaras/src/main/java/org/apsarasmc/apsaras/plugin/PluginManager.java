@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.Collection;
 
 public interface PluginManager {
-    Collection<PluginContainer> getPlugins();
+  Collection< PluginContainer > getPlugins();
 
-    void addPlugin(File pluginFile);
+  void addPlugin(File pluginFile);
 
-    void addPlugin(PluginContainer plugin);
+  void addPlugin(PluginContainer plugin);
 
-    void load();
+  void load();
 
-    void enable();
+  void enable();
 }

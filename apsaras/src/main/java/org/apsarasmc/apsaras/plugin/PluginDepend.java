@@ -9,28 +9,28 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface PluginDepend extends Named {
-    @Nonnull
-    static PluginDepend of(final @Nullable Type type, final @Nullable String name) {
-        return PluginDepend.builder().type(type).name(name).build();
-    }
+  @Nonnull
+  static PluginDepend of(final @Nullable Type type, final @Nullable String name) {
+    return PluginDepend.builder().type(type).name(name).build();
+  }
 
-    @Nonnull
-    static Builder builder() {
-        return Apsaras.injector().getInstance(Builder.class);
-    }
+  @Nonnull
+  static Builder builder() {
+    return Apsaras.injector().getInstance(Builder.class);
+  }
 
-    @Nonnull
-    Type type();
+  @Nonnull
+  Type type();
 
-    enum Type {
-        REQUIRE,
-        SOFT,
-        COOPERATE,
-        LIBRARY
-    }
+  enum Type {
+    REQUIRE,
+    SOFT,
+    COOPERATE,
+    LIBRARY
+  }
 
-    interface Builder extends AbstractBuilder<PluginDepend, PluginDepend.Builder>,
-            NamedBuilder<PluginDepend, PluginDepend.Builder> {
-        Builder type(Type type);
-    }
+  interface Builder extends AbstractBuilder< PluginDepend >,
+    NamedBuilder< PluginDepend, PluginDepend.Builder > {
+    Builder type(Type type);
+  }
 }

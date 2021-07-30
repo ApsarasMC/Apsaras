@@ -6,17 +6,17 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 
 public interface Server {
-    SchedulerService sync();
+  SchedulerService sync();
 
-    SchedulerService uts();
+  SchedulerService uts();
 
-    Logger logger();
+  Logger logger();
 
-    ClassLoader classLoader();
+  ClassLoader classLoader();
 
-    Path gamePath();
+  Path gamePath();
 
-    Path pluginPath();
+  Path pluginPath();
 
-    String version();
+  String version();
 }

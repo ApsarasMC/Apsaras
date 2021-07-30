@@ -16,19 +16,19 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class UtsScheduler implements SchedulerService {
-    @Inject
-    private SpongeCore core;
+  @Inject
+  private SpongeCore core;
 
-    @Override
-    public <T> Task<T> runLater(final PluginContainer plugin, final Callable<T> command, final int delay, final TimeUnit timeUnit) {
-        CompletableFuture<T> completableFuture = new CompletableFuture<>();
-        Sponge.asyncScheduler().submit(
-                org.spongepowered.api.scheduler.Task.builder()
-                        .plugin(core.wrapper())
-                        .delay(delay, timeUnit)
-                        .execute(RunnableUtil.runnable(command, completableFuture))
-                        .build()
-        );
-        return new CompletableFutureTask<>(plugin, completableFuture);
-    }
+  @Override
+  public < T > Task< T > runLater(final PluginContainer plugin, final Callable< T > command, final int delay, final TimeUnit timeUnit) {
+    CompletableFuture< T > completableFuture = new CompletableFuture<>();
+    Sponge.asyncScheduler().submit(
+      org.spongepowered.api.scheduler.Task.builder()
+        .plugin(core.wrapper())
+        .delay(delay, timeUnit)
+        .execute(RunnableUtil.runnable(command, completableFuture))
+        .build()
+    );
+    return new CompletableFutureTask<>(plugin, completableFuture);
+  }
 }

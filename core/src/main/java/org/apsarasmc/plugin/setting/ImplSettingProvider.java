@@ -10,18 +10,18 @@ import javax.inject.Singleton;
 
 
 @Singleton
-public class ImplSettingProvider implements Provider<ApsarasSetting> {
-    private final ConfigService<ApsarasSetting> configService;
-    private ApsarasSetting setting;
+public class ImplSettingProvider implements Provider< ApsarasSetting > {
+  private final ConfigService< ApsarasSetting > configService;
+  private ApsarasSetting setting;
 
-    @Inject
-    public ImplSettingProvider(final ApsarasPluginContainer pluginContainer, final ConfigService.Factory configServiceFactory, final Server server) throws Exception {
-        configService = configServiceFactory.of(pluginContainer, "config", ApsarasSetting.class);
-        this.setting = configService.load();
-    }
+  @Inject
+  public ImplSettingProvider(final ApsarasPluginContainer pluginContainer, final ConfigService.Factory configServiceFactory, final Server server) throws Exception {
+    configService = configServiceFactory.of(pluginContainer, "config", ApsarasSetting.class);
+    this.setting = configService.load();
+  }
 
-    @Override
-    public ApsarasSetting get() {
-        return this.setting;
-    }
+  @Override
+  public ApsarasSetting get() {
+    return this.setting;
+  }
 }

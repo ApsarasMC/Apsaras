@@ -7,8 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@ExtendWith(InjectTestExtension.class)
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@ExtendWith (InjectTestExtension.class)
+@Retention (RetentionPolicy.RUNTIME)
+@Target ({ ElementType.TYPE })
 public @interface InjectTest {
 }

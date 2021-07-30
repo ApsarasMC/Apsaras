@@ -21,79 +21,77 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class SpigotCore implements Server, Listener {
-    private JavaPlugin wrapper;
-    @Inject
-    private SyncScheduler syncScheduler;
-    @Inject
-    private UtsScheduler utsScheduler;
-    @Inject
-    private Handlers handlers;
+  private JavaPlugin wrapper;
+  @Inject
+  private SyncScheduler syncScheduler;
+  @Inject
+  private UtsScheduler utsScheduler;
+  @Inject
+  private Handlers handlers;
 
-    public SpigotCore(final JavaPlugin wrapper) {
-        this.wrapper = wrapper;
+  public SpigotCore(final JavaPlugin wrapper) {
+    this.wrapper = wrapper;
+  }
+
+  public JavaPlugin wrapper() {
+    return this.wrapper;
+  }
+
+  public void init() {
+    new ImplGame(new SpigotModule(binder -> {
+      binder.bind(Server.class).toInstance(this);
+      binder.bind(SpigotCore.class).toInstance(this);
+    }));
+    Apsaras.injector().inject(this);
+
+    try {
+      Path pluginsPath = this.pluginPath().resolve("plugins");
+      Files.createDirectories(pluginsPath);
+      Arrays.stream(
+        Objects.requireNonNull(pluginsPath.toFile().listFiles())
+      ).filter(file -> file.getName().endsWith(".jar")).forEach(file -> Apsaras.pluginManager().addPlugin(file));
+    } catch (Exception e) {
+      this.logger().warn("Failed to open plugins dir.", e);
     }
+    Apsaras.pluginManager().load();
+    Apsaras.pluginManager().enable();
 
-    public JavaPlugin wrapper() {
-        return this.wrapper;
-    }
+    Bukkit.getPluginManager().registerEvents(this, this.wrapper);
+    this.handlers.register();
+  }
 
-    public void init() {
-        new ImplGame(new SpigotModule(binder -> {
-            binder.bind(Server.class).toInstance(this);
-            binder.bind(SpigotCore.class).toInstance(this);
-        }));
-        Apsaras.injector().inject(this);
+  @Override
+  public SchedulerService sync() {
+    return this.syncScheduler;
+  }
 
-        try {
-            Path pluginsPath = this.pluginPath().resolve("plugins");
-            Files.createDirectories(pluginsPath);
-            Arrays.stream(
-                    Objects.requireNonNull(pluginsPath.toFile().listFiles())
-            ).filter(file -> file.getName().endsWith(".jar")).forEach(file -> {
-                Apsaras.pluginManager().addPlugin(file);
-            });
-        } catch (Exception e) {
-            this.logger().warn("Failed to open plugins dir.", e);
-        }
-        Apsaras.pluginManager().load();
-        Apsaras.pluginManager().enable();
+  @Override
+  public SchedulerService uts() {
+    return this.utsScheduler;
+  }
 
-        Bukkit.getPluginManager().registerEvents(this, this.wrapper);
-        this.handlers.register();
-    }
+  @Override
+  public Logger logger() {
+    return new SpigotLogger(wrapper.getLogger());
+  }
 
-    @Override
-    public SchedulerService sync() {
-        return this.syncScheduler;
-    }
+  @Override
+  public ClassLoader classLoader() {
+    return SpigotCore.class.getClassLoader();
+  }
 
-    @Override
-    public SchedulerService uts() {
-        return this.utsScheduler;
-    }
+  @Override
+  public Path gamePath() {
+    return new File(".").toPath();
+  }
 
-    @Override
-    public Logger logger() {
-        return new SpigotLogger(wrapper.getLogger());
-    }
+  @Override
+  public Path pluginPath() {
+    return this.gamePath().resolve("apsaras");
+  }
 
-    @Override
-    public ClassLoader classLoader() {
-        return SpigotCore.class.getClassLoader();
-    }
-
-    @Override
-    public Path gamePath() {
-        return new File(".").toPath();
-    }
-
-    @Override
-    public Path pluginPath() {
-        return this.gamePath().resolve("apsaras");
-    }
-
-    @Override
-    public String version() {
-        return wrapper.getDescription().getVersion();
-    }
+  @Override
+  public String version() {
+    return wrapper.getDescription().getVersion();
+  }
 }

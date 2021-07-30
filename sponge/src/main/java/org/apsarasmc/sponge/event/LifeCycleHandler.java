@@ -8,8 +8,8 @@ import javax.inject.Singleton;
 
 @Singleton
 public class LifeCycleHandler implements EventHandler {
-    @Override
-    public void register() {
-        EventUtil.listen(LoadedGameEvent.class, event -> new ImplServerLoadEvent());
-    }
+  @Override
+  public void register() {
+    EventUtil.listen(LoadedGameEvent.class, event -> new ImplServerLoadEvent());
+  }
 }

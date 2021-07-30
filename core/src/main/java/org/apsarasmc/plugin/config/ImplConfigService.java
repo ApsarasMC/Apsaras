@@ -13,48 +13,49 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Path;
 
-public class ImplConfigService<T> implements ConfigService<T> {
-    private final Path path;
-    private final Class<T> configClass;
-    private final Yaml yaml;
+public class ImplConfigService< T > implements ConfigService< T > {
+  private final Path path;
+  private final Class< T > configClass;
+  private final Yaml yaml;
 
-    public ImplConfigService(final Path path, final Class<T> configClass) {
-        this.path = path;
-        this.configClass = configClass;
+  public ImplConfigService(final Path path, final Class< T > configClass) {
+    this.path = path;
+    this.configClass = configClass;
 
-        DumperOptions dumperOptions = new DumperOptions();
-        dumperOptions.setProcessComments(true);
-        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
+    DumperOptions dumperOptions = new DumperOptions();
+    dumperOptions.setProcessComments(true);
+    dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
 
-        yaml = new Yaml(
-                new Constructor(),
-                new ApsarasRepresenter(),
-                dumperOptions,
-                new LoaderOptions(),
-                new Resolver()
-        );
+    yaml = new Yaml(
+      new Constructor(),
+      new ApsarasRepresenter(),
+      dumperOptions,
+      new LoaderOptions(),
+      new Resolver()
+    );
+  }
+
+
+  @Override
+  public T load() throws Exception {
+    if (!path.toFile().exists()) {
+      save(configClass.getConstructor().newInstance());
     }
+    return yaml.loadAs(new FileReader(path.toFile()), configClass);
+  }
 
+  @Override
+  public void save(final T object) throws Exception {
+    try (FileWriter fileWriter = new FileWriter(path.toFile())) {
+      fileWriter.write(yaml.dumpAs(object, Tag.MAP, DumperOptions.FlowStyle.AUTO));
+      fileWriter.flush();
+    }
+  }
 
+  public static class Factory implements ConfigService.Factory {
     @Override
-    public T load() throws Exception {
-        if(!path.toFile().exists()){
-            save(configClass.getConstructor().newInstance());
-        }
-        return yaml.loadAs(new FileReader(path.toFile()), configClass);
+    public < T > ConfigService< T > of(final PluginContainer pluginContainer, final String name, final Class< T > configClass) {
+      return new ImplConfigService<>(pluginContainer.configPath().resolve(name + ".yml"), configClass);
     }
-
-    @Override
-    public void save(final T object) throws Exception {
-        FileWriter fileWriter = new FileWriter(path.toFile());
-        fileWriter.write(yaml.dumpAs(object,Tag.MAP, DumperOptions.FlowStyle.AUTO));
-        fileWriter.flush();
-    }
-
-    public static class Factory implements ConfigService.Factory {
-        @Override
-        public <T> ConfigService<T> of(final PluginContainer pluginContainer, final String name, final Class<T> configClass) {
-            return new ImplConfigService<>(pluginContainer.configPath().resolve(name + ".yml"), configClass);
-        }
-    }
+  }
 }

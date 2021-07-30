@@ -7,22 +7,22 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
 public interface PluginContainer extends Named {
-    @Nonnull
-    PluginMeta meta();
+  @Nonnull
+  PluginMeta meta();
 
-    Logger logger();
+  Logger logger();
 
-    void addDepend(PluginContainer depend);
+  void addDepend(PluginContainer depend);
 
-    boolean enabled();
+  boolean enabled();
 
-    void load() throws Exception;
+  void load() throws Exception;
 
-    void enable() throws Exception;
+  void enable() throws Exception;
 
-    void disable() throws Exception;
+  void disable() throws Exception;
 
-    Path dataPath();
+  Path dataPath();
 
-    Path configPath();
+  Path configPath();
 }

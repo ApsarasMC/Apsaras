@@ -8,23 +8,24 @@ import org.apsarasmc.apsaras.util.ResourceKeyed;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 
-public interface EventContextKey<T> extends ResourceKeyed {
-    static Builder<?> builder() {
-        return Apsaras.injector().getInstance(Builder.class);
-    }
+public interface EventContextKey< T > extends ResourceKeyed {
+  @SuppressWarnings ("unchecked")
+  static Builder< Object > builder() {
+    return Apsaras.injector().getInstance(Builder.class);
+  }
 
-    static <T> EventContextKey<T> of(final @Nonnull ResourceKey key, final @Nonnull Class<T> type) {
-        return EventContextKey.builder().key(key).type(type).build();
-    }
+  static < T > EventContextKey< T > of(final @Nonnull ResourceKey key, final @Nonnull Class< T > type) {
+    return EventContextKey.builder().key(key).type(type).build();
+  }
 
-    @Nonnull
-    Type allowedType();
+  @Nonnull
+  Type allowedType();
 
-    boolean isInstance(Object value);
+  boolean isInstance(Object value);
 
-    T cast(Object value);
+  T cast(Object value);
 
-    interface Builder<T> extends KeyedBuilder<EventContextKey<T>, Builder<T>> {
-        <N> Builder<N> type(Class<N> type);
-    }
+  interface Builder< T > extends KeyedBuilder< EventContextKey< T >, Builder< T > > {
+    < N > Builder< N > type(Class< N > type);
+  }
 }

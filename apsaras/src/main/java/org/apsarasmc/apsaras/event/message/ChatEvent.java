@@ -7,15 +7,15 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public interface ChatEvent {
-    String originalChatFormatter();
+  String originalChatFormatter();
 
-    Optional<String> chatFormatter();
+  Optional< String > chatFormatter();
 
-    void setChatFormatter(@Nullable String router);
+  void setChatFormatter(@Nullable String router);
 
-    String originalMessage();
+  String originalMessage();
 
-    Component message();
+  Component message();
 
-    void setMessage(@Nonnull String message);
+  void setMessage(@Nonnull String message);
 }

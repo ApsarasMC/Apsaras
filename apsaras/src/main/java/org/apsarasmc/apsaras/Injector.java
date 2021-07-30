@@ -1,7 +1,7 @@
 package org.apsarasmc.apsaras;
 
 public interface Injector {
-    <T> T inject(T object);
+  < T > T inject(T object);
 
-    <T> T getInstance(Class<T> clazz);
+  < T > T getInstance(Class< T > clazz);
 }

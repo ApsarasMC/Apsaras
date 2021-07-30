@@ -16,62 +16,66 @@ import org.apsarasmc.plugin.util.ImplInjector;
 import java.lang.reflect.Field;
 
 public class ImplGame implements Game {
-    private final Injector injector;
-    @Inject
-    private PluginManager pluginManager;
-    @Inject
-    private EventManager eventManager;
-    @Inject
-    private ApsarasSetting setting;
-    @Inject
-    private BannerPrinter bannerPrinter;
-    @Inject
-    private Server server;
-    @Inject
-    private ApsarasPluginContainer self;
+  private final Injector injector;
+  @Inject
+  private PluginManager pluginManager;
+  @Inject
+  private EventManager eventManager;
+  @Inject
+  private ApsarasSetting setting;
+  @Inject
+  private BannerPrinter bannerPrinter;
+  @Inject
+  private Server server;
+  @Inject
+  private ApsarasPluginContainer self;
 
-    public ImplGame(final Module module) {
-        this.injector = new ImplInjector(Guice.createInjector(new ImplModule(binder -> {
-            binder.bind(Game.class).toInstance(this);
-        }), module));
-        try {
-            Field gameField = Apsaras.class.getDeclaredField("game");
-            gameField.setAccessible(true);
-            gameField.set(null, this);
-        }catch (RuntimeException e){
-            throw e;
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-        this.injector.inject(this);
-        this.pluginManager.addPlugin(self);
-        if (this.setting.banner) {
-            this.bannerPrinter.print(System.out);
-        }
+  public ImplGame(final Module module) {
+    this.injector = new ImplInjector(Guice.createInjector(new ImplModule(binder ->
+      binder.bind(Game.class).toInstance(this)
+    ), module));
+    reflectSetGameField();
+    this.injector.inject(this);
+    this.pluginManager.addPlugin(self);
+    if (this.setting.banner) {
+      this.bannerPrinter.print(System.out);
     }
+  }
 
-    @Override
-    public Server server() {
-        return this.server;
+  private void reflectSetGameField() {
+    try {
+      Field gameField = Apsaras.class.getDeclaredField("game");
+      gameField.setAccessible(true);
+      gameField.set(null, this);
+    } catch (RuntimeException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    @Override
-    public PluginManager pluginManager() {
-        return this.pluginManager;
-    }
+  @Override
+  public Server server() {
+    return this.server;
+  }
 
-    @Override
-    public EventManager eventManager() {
-        return this.eventManager;
-    }
+  @Override
+  public PluginManager pluginManager() {
+    return this.pluginManager;
+  }
 
-    @Override
-    public Injector injector() {
-        return this.injector;
-    }
+  @Override
+  public EventManager eventManager() {
+    return this.eventManager;
+  }
 
-    @Override
-    public PluginContainer self() {
-        return this.self;
-    }
+  @Override
+  public Injector injector() {
+    return this.injector;
+  }
+
+  @Override
+  public PluginContainer self() {
+    return this.self;
+  }
 }

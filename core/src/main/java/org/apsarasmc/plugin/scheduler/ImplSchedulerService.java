@@ -18,52 +18,52 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImplSchedulerService implements SchedulerService {
-    private final AtomicInteger id = new AtomicInteger(0);
-    private final ScheduledThreadPoolExecutor executor;
+  private final AtomicInteger id = new AtomicInteger(0);
+  private final ScheduledThreadPoolExecutor executor;
 
-    private ImplSchedulerService(final @Nonnull PluginContainer plugin, final int threads, final @Nonnull String name) {
-        this.executor = new ScheduledThreadPoolExecutor(threads, r -> new Thread(r, plugin.name() + "-" + name + id.getAndIncrement()));
+  private ImplSchedulerService(final @Nonnull PluginContainer plugin, final int threads, final @Nonnull String name) {
+    this.executor = new ScheduledThreadPoolExecutor(threads, r -> new Thread(r, plugin.name() + "-" + name + id.getAndIncrement()));
+  }
+
+  @Override
+  public < T > Task< T > runLater(PluginContainer plugin, Callable< T > command, int delay, TimeUnit timeUnit) {
+    CompletableFuture< T > future = new CompletableFuture<>();
+    this.executor.schedule(RunnableUtil.runnable(command, future), delay, timeUnit);
+    return new CompletableFutureTask<>(plugin, future);
+  }
+
+  @Override
+  public void shutdown() {
+    SchedulerService.super.shutdown();
+  }
+
+  @Singleton
+  public static class Factory implements SchedulerService.Factory {
+    private final Map< PluginContainer, Collection< SchedulerService > > services = new HashMap<>();
+
+    @Override
+    public SchedulerService of(PluginContainer plugin, int threads, String name) {
+      ImplSchedulerService service = new ImplSchedulerService(plugin, threads, name);
+      Collection< SchedulerService > collection = services.computeIfAbsent(plugin, k -> new ArrayList<>());
+      collection.add(service);
+      return service;
     }
 
     @Override
-    public <T> Task<T> runLater(PluginContainer plugin, Callable<T> command, int delay, TimeUnit timeUnit) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-        this.executor.schedule(RunnableUtil.runnable(command, future), delay, timeUnit);
-        return new CompletableFutureTask<>(plugin, future);
+    public Collection< SchedulerService > all(PluginContainer plugin) {
+      return new ArrayList<>(services.get(plugin));
     }
 
     @Override
-    public void shutdown() {
-        SchedulerService.super.shutdown();
+    public void unregister(PluginContainer plugin) {
+      Collection< SchedulerService > collection = services.get(plugin);
+      if (collection == null) {
+        return;
+      }
+      for (SchedulerService schedulerService : collection) {
+        schedulerService.shutdown();
+      }
+      services.remove(plugin);
     }
-
-    @Singleton
-    public static class Factory implements SchedulerService.Factory {
-        private final Map<PluginContainer, Collection<SchedulerService>> services = new HashMap<>();
-
-        @Override
-        public SchedulerService of(PluginContainer plugin, int threads, String name) {
-            ImplSchedulerService service = new ImplSchedulerService(plugin, threads, name);
-            Collection<SchedulerService> collection = services.computeIfAbsent(plugin, k -> new ArrayList<>());
-            collection.add(service);
-            return service;
-        }
-
-        @Override
-        public Collection<SchedulerService> all(PluginContainer plugin) {
-            return new ArrayList<>(services.get(plugin));
-        }
-
-        @Override
-        public void unregister(PluginContainer plugin) {
-            Collection<SchedulerService> collection = services.get(plugin);
-            if (collection == null) {
-                return;
-            }
-            for (SchedulerService schedulerService : collection) {
-                schedulerService.shutdown();
-            }
-            services.remove(plugin);
-        }
-    }
+  }
 }

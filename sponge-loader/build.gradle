@@ -2,58 +2,58 @@ import org.spongepowered.gradle.plugin.config.PluginLoaders
 import org.spongepowered.plugin.metadata.PluginDependency
 
 plugins {
-    id 'org.spongepowered.gradle.plugin' version '1.1.1'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
+  id 'org.spongepowered.gradle.plugin' version '1.1.1'
+  id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
 sponge {
-    apiVersion('8.0.0')
-    plugin('apsaras') {
-        loader(PluginLoaders.JAVA_PLAIN)
-        displayName('Apsaras')
-        mainClass('org.apsarasmc.loader.sponge.SpongeLaunchWrapper')
-        description('Provide apsaras api for sponge')
-        links {
-            homepage("https://github.com/ApsarasMC")
-            source("https://github.com/ApsarasMC/ApsarasPlugin")
-            issues("https://github.com/ApsarasMC/Apsaras/issues")
-        }
-        dependency('spongeapi') {
-            loadOrder(PluginDependency.LoadOrder.AFTER)
-            optional(false)
-        }
+  apiVersion('8.0.0')
+  plugin('apsaras') {
+    loader(PluginLoaders.JAVA_PLAIN)
+    displayName('Apsaras')
+    mainClass('org.apsarasmc.loader.sponge.SpongeLaunchWrapper')
+    description('Provide apsaras api for sponge')
+    links {
+      homepage("https://github.com/ApsarasMC")
+      source("https://github.com/ApsarasMC/ApsarasPlugin")
+      issues("https://github.com/ApsarasMC/Apsaras/issues")
     }
+    dependency('spongeapi') {
+      loadOrder(PluginDependency.LoadOrder.AFTER)
+      optional(false)
+    }
+  }
 }
 
 dependencies {
-    runtimeOnly project(':sponge')
+  runtimeOnly project(':sponge')
 }
 
 shadowJar {
-    archiveBaseName.set('Apsaras')
-    archiveClassifier.set('sponge')
+  archiveBaseName.set('Apsaras')
+  archiveClassifier.set('sponge')
 
-    dependencies {
-        exclude(dependency('com.google.code.findbugs:jsr305:'))
-        exclude(dependency('com.google.inject:guice:'))
-        exclude(dependency('javax.inject:javax.inject:'))
-        exclude(dependency('aopalliance:aopalliance:'))
-        exclude(dependency('com.google.code.gson:gson:'))
+  dependencies {
+    exclude(dependency('com.google.code.findbugs:jsr305:'))
+    exclude(dependency('com.google.inject:guice:'))
+    exclude(dependency('javax.inject:javax.inject:'))
+    exclude(dependency('aopalliance:aopalliance:'))
+    exclude(dependency('com.google.code.gson:gson:'))
 
-        exclude(dependency('com.google.guava:guava:'))
-        exclude(dependency('com.google.errorprone:error_prone_annotations:'))
-        exclude(dependency('com.google.guava:failureaccess:'))
-        exclude(dependency('com.google.guava:listenablefuture:'))
-        exclude(dependency('com.google.j2objc:j2objc-annotations:'))
+    exclude(dependency('com.google.guava:guava:'))
+    exclude(dependency('com.google.errorprone:error_prone_annotations:'))
+    exclude(dependency('com.google.guava:failureaccess:'))
+    exclude(dependency('com.google.guava:listenablefuture:'))
+    exclude(dependency('com.google.j2objc:j2objc-annotations:'))
 
-        exclude(dependency('net.kyori:adventure-api:'))
-        exclude(dependency('net.kyori:adventure-bom:'))
-        exclude(dependency('net.kyori:adventure-key:'))
-        exclude(dependency('net.kyori:examination-api:'))
-        exclude(dependency('net.kyori:examination-string:'))
+    exclude(dependency('net.kyori:adventure-api:'))
+    exclude(dependency('net.kyori:adventure-bom:'))
+    exclude(dependency('net.kyori:adventure-key:'))
+    exclude(dependency('net.kyori:examination-api:'))
+    exclude(dependency('net.kyori:examination-string:'))
 
-        exclude(dependency('org.slf4j:slf4j-api:'))
-    }
+    exclude(dependency('org.slf4j:slf4j-api:'))
+  }
 }
 
 assemble.dependsOn(shadowJar)

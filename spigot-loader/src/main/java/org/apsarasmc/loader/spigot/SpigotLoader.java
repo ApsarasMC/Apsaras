@@ -7,62 +7,63 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class SpigotLoader extends URLClassLoader {
-    private static final Collection<String> parentPrefixCollection;
-    static {
-        Collection<String> parentPrefixes = new ArrayList<>();
-        parentPrefixes.add("org.apsarasmc.apsaras");
-        parentPrefixes.add("javax");
-        parentPrefixes.add("net.kyori.examination");
-        parentPrefixes.add("net.kyori.adventure");
-        parentPrefixCollection = Collections.unmodifiableCollection(parentPrefixes);
-    }
+  private static final Collection< String > parentPrefixCollection;
 
-    public SpigotLoader(URL jarPath, ClassLoader parent) {
-        super(new URL[]{jarPath}, parent);
-    }
+  static {
+    Collection< String > parentPrefixes = new ArrayList<>();
+    parentPrefixes.add("org.apsarasmc.apsaras");
+    parentPrefixes.add("javax");
+    parentPrefixes.add("net.kyori.examination");
+    parentPrefixes.add("net.kyori.adventure");
+    parentPrefixCollection = Collections.unmodifiableCollection(parentPrefixes);
+  }
 
-    @Override
-    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        synchronized (getClassLoadingLock(name)) {
-            Class<?> c = null;
-            for (String parentPrefix : parentPrefixCollection) {
-                if (name.startsWith(parentPrefix)) {
-                    c = super.getParent().loadClass(name);
-                }
-            }
-            if (c == null) {
-                c = super.findLoadedClass(name);
-            }
-            if (c == null) {
-                try {
-                    c = super.findClass(name);
-                } catch (ClassNotFoundException ignore) {
+  public SpigotLoader(URL jarPath, ClassLoader parent) {
+    super(new URL[] { jarPath }, parent);
+  }
 
-                }
-            }
-            if (c == null) {
-                try {
-                    c = super.getParent().loadClass(name);
-                } catch (ClassNotFoundException ignore) {
-
-                }
-            }
-            if (c == null) {
-                throw new ClassNotFoundException(name);
-            }
-            if (resolve) {
-                resolveClass(c);
-            }
-            return c;
+  @Override
+  protected Class< ? > loadClass(String name, boolean resolve) throws ClassNotFoundException {
+    synchronized (getClassLoadingLock(name)) {
+      Class< ? > c = null;
+      for (String parentPrefix : parentPrefixCollection) {
+        if (name.startsWith(parentPrefix)) {
+          c = super.getParent().loadClass(name);
         }
-    }
-
-    @Override
-    public URL getResource(String name) {
-        URL u = super.findResource(name);
-        if (u != null) {
-            return u;
+      }
+      if (c == null) {
+        c = super.findLoadedClass(name);
+      }
+      if (c == null) {
+        try {
+          c = super.findClass(name);
+        } catch (ClassNotFoundException ignore) {
+          //
         }
-        return super.getParent().getResource(name);
+      }
+      if (c == null) {
+        try {
+          c = super.getParent().loadClass(name);
+        } catch (ClassNotFoundException ignore) {
+          //
+        }
+      }
+      if (c == null) {
+        throw new ClassNotFoundException(name);
+      }
+      if (resolve) {
+        resolveClass(c);
+      }
+      return c;
     }
+  }
+
+  @Override
+  public URL getResource(String name) {
+    URL u = super.findResource(name);
+    if (u != null) {
+      return u;
+    }
+    return super.getParent().getResource(name);
+  }
 }

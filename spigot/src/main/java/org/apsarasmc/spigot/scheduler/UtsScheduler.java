@@ -16,16 +16,16 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class UtsScheduler implements SchedulerService {
-    @Inject
-    private SpigotCore core;
+  @Inject
+  private SpigotCore core;
 
-    @Override
-    public <T> Task<T> runLater(PluginContainer plugin, Callable<T> command, int delay, TimeUnit timeUnit) {
-        CompletableFuture<T> completableFuture = new CompletableFuture<>();
-        Bukkit.getScheduler().runTaskLaterAsynchronously(
-                core.wrapper(),
-                RunnableUtil.runnable(command, completableFuture),
-                timeUnit.toMillis(delay) / 50);
-        return new CompletableFutureTask<>(plugin, completableFuture);
-    }
+  @Override
+  public < T > Task< T > runLater(PluginContainer plugin, Callable< T > command, int delay, TimeUnit timeUnit) {
+    CompletableFuture< T > completableFuture = new CompletableFuture<>();
+    Bukkit.getScheduler().runTaskLaterAsynchronously(
+      core.wrapper(),
+      RunnableUtil.runnable(command, completableFuture),
+      timeUnit.toMillis(delay) / 50);
+    return new CompletableFutureTask<>(plugin, completableFuture);
+  }
 }

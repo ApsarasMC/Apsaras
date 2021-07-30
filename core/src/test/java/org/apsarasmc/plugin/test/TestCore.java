@@ -17,65 +17,65 @@ import java.util.Objects;
 
 
 public class TestCore implements Server {
-    @Inject
-    private Handlers handlers;
+  @Inject
+  private Handlers handlers;
 
-    public void init() {
-        new ImplGame(new TestModule(binder -> {
-            binder.bind(Server.class).toInstance(this);
-            binder.bind(TestCore.class).toInstance(this);
-        }));
-        Apsaras.injector().inject(this);
+  public void init() {
+    new ImplGame(new TestModule(binder -> {
+      binder.bind(Server.class).toInstance(this);
+      binder.bind(TestCore.class).toInstance(this);
+    }));
+    Apsaras.injector().inject(this);
 
-        try {
-            Path pluginsPath = this.pluginPath().resolve("plugins");
-            Files.createDirectories(pluginsPath);
-            Arrays.stream(
-                    Objects.requireNonNull(pluginsPath.toFile().listFiles())
-            ).filter(file -> file.getName().endsWith(".jar")).forEach(file -> {
-                Apsaras.pluginManager().addPlugin(file);
-            });
-        } catch (Exception e) {
-            this.logger().warn("Failed to open plugins dir.", e);
-        }
-        Apsaras.pluginManager().load();
-        Apsaras.pluginManager().enable();
-
-        this.handlers.register();
+    try {
+      Path pluginsPath = this.pluginPath().resolve("plugins");
+      Files.createDirectories(pluginsPath);
+      Arrays.stream(
+        Objects.requireNonNull(pluginsPath.toFile().listFiles())
+      ).filter(file -> file.getName().endsWith(".jar")).forEach(file -> {
+        Apsaras.pluginManager().addPlugin(file);
+      });
+    } catch (Exception e) {
+      this.logger().warn("Failed to open plugins dir.", e);
     }
+    Apsaras.pluginManager().load();
+    Apsaras.pluginManager().enable();
 
-    @Override
-    public SchedulerService sync() {
-        throw new IllegalStateException("Sync scheduler is disable in core test environment.");
-    }
+    this.handlers.register();
+  }
 
-    @Override
-    public SchedulerService uts() {
-        throw new IllegalStateException("Uts scheduler is disable in core test environment.");
-    }
+  @Override
+  public SchedulerService sync() {
+    throw new IllegalStateException("Sync scheduler is disable in core test environment.");
+  }
 
-    @Override
-    public Logger logger() {
-        return LoggerFactory.getLogger("apsaras");
-    }
+  @Override
+  public SchedulerService uts() {
+    throw new IllegalStateException("Uts scheduler is disable in core test environment.");
+  }
 
-    @Override
-    public ClassLoader classLoader() {
-        return TestCore.class.getClassLoader();
-    }
+  @Override
+  public Logger logger() {
+    return LoggerFactory.getLogger("apsaras");
+  }
 
-    @Override
-    public Path gamePath() {
-        return new File("./run").toPath();
-    }
+  @Override
+  public ClassLoader classLoader() {
+    return TestCore.class.getClassLoader();
+  }
 
-    @Override
-    public Path pluginPath() {
-        return gamePath().resolve("plugins");
-    }
+  @Override
+  public Path gamePath() {
+    return new File("./run").toPath();
+  }
 
-    @Override
-    public String version() {
-        return "test";
-    }
+  @Override
+  public Path pluginPath() {
+    return gamePath().resolve("plugins");
+  }
+
+  @Override
+  public String version() {
+    return "test";
+  }
 }

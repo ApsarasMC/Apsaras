@@ -6,15 +6,15 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 
 public interface Scheduler {
-    SchedulerService sync();
+  SchedulerService sync();
 
-    SchedulerService uts();
+  SchedulerService uts();
 
-    default Collection<SchedulerService> all(PluginContainer pluginContainer) {
-        return SchedulerService.factory().all(pluginContainer);
-    }
+  default Collection< SchedulerService > all(PluginContainer pluginContainer) {
+    return SchedulerService.factory().all(pluginContainer);
+  }
 
-    default SchedulerService startup(final @Nonnull PluginContainer plugin, final int threads, final @Nonnull String name) {
-        return SchedulerService.factory().of(plugin, threads, name);
-    }
+  default SchedulerService startup(final @Nonnull PluginContainer plugin, final int threads, final @Nonnull String name) {
+    return SchedulerService.factory().of(plugin, threads, name);
+  }
 }
