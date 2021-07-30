@@ -53,7 +53,30 @@ shadowJar {
     exclude(dependency('net.kyori:examination-string:'))
 
     exclude(dependency('org.slf4j:slf4j-api:'))
+    exclude(dependency('javax.annotation:javax.annotation-api:'))
   }
+
+  relocate('org.sonatype.inject','org.apsarasmc.libs.sonatype.inject')
+  relocate('org.eclipse.sisu','org.apsarasmc.libs.eclipse.sisu')
+  relocate('org.eclipse.aether','org.apsarasmc.libs.eclipse.aether')
+  relocate('org.codehaus.plexus', 'org.apsarasmc.libs.codehaus.plexus')
+  relocate('org.apache.maven', 'org.apsarasmc.libs.apache.maven')
+  relocate('org.apache.http', 'org.apsarasmc.libs.apache.http')
+  relocate('org.apache.commons', 'org.apsarasmc.libs.apache.commons')
+  relocate('org.yaml.snakeyaml', 'org.apsarasmc.libs.snakeyaml')
+
+  exclude 'about.html'
+  exclude 'plugin.xml'
+  exclude 'licenses/**'
+  exclude 'mozilla/**'
+  exclude 'META-INF/maven/**'
+  exclude 'META-INF/services/**'
+  exclude 'META-INF/sisu/**'
+  exclude 'META-INF/DEPENDENCIES'
+  exclude 'META-INF/LICENSE'
+  exclude 'META-INF/NOTICE'
+  exclude 'META-INF/LICENSE.txt'
+  exclude 'META-INF/NOTICE.txt'
 }
 
 assemble.dependsOn(shadowJar)
