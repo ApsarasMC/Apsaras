@@ -1,4 +1,12 @@
-group = 'org.apsaras.plugin'
+plugins {
+  id 'maven-publish'
+}
+
+repositories {
+  mavenCentral()
+}
+
+group = 'org.apsaras'
 version = '1.0-SNAPSHOT'
 subprojects {
   apply plugin: 'java'
