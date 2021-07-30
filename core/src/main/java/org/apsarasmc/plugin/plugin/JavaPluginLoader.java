@@ -13,10 +13,6 @@ public class JavaPluginLoader extends URLClassLoader {
 
   static {
     Collection< String > neverLoadPrefixes = new ArrayList<>();
-    neverLoadPrefixes.add("org.apsarasmc.plugin");
-    neverLoadPrefixes.add("org.apsarasmc.sponge");
-    neverLoadPrefixes.add("org.apsarasmc.spigot");
-    neverLoadPrefixes.add("org.apsarasmc.loader");
     neverLoadCollection = Collections.unmodifiableCollection(neverLoadPrefixes);
   }
 
