@@ -11,16 +11,13 @@ public class SpigotLaunchWrapper extends JavaPlugin {
   public void onEnable() {
     try {
       String s = SpigotLaunchWrapper.class.getProtectionDomain().getCodeSource().getLocation().toString();
-      try (
-        SpigotLoader spigotLoader = new SpigotLoader(
-          new URL("jar:" + s + "!/"),
-          SpigotLaunchWrapper.class.getClassLoader())
-      ) {
-        Class< ? > clazz = spigotLoader.loadClass("org.apsarasmc.spigot.SpigotCore");
-        clazz.getMethod("init").invoke(
-          clazz.getConstructor(JavaPlugin.class).newInstance(this)
-        );
-      }
+      SpigotLoader spigotLoader = new SpigotLoader(
+        new URL("jar:" + s + "!/"),
+        SpigotLaunchWrapper.class.getClassLoader());
+      Class< ? > clazz = spigotLoader.loadClass("org.apsarasmc.spigot.SpigotCore");
+      clazz.getMethod("init").invoke(
+        clazz.getConstructor(JavaPlugin.class).newInstance(this)
+      );
     } catch (Exception e) {
       Bukkit.getLogger().log(Level.WARNING, "Failed to load Apsaras.", e);
     }
