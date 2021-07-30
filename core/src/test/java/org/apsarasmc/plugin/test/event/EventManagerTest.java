@@ -1,6 +1,5 @@
 package org.apsarasmc.plugin.test.event;
 
-import org.apsarasmc.apsaras.event.EventHandler;
 import org.apsarasmc.apsaras.event.EventListener;
 import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.plugin.ApsarasPluginContainer;

@@ -33,9 +33,9 @@ shadowJar {
     exclude(dependency('javax.annotation:javax.annotation-api:'))
   }
 
-  relocate('org.sonatype.inject','org.apsarasmc.libs.sonatype.inject')
-  relocate('org.eclipse.sisu','org.apsarasmc.libs.eclipse.sisu')
-  relocate('org.eclipse.aether','org.apsarasmc.libs.eclipse.aether')
+  relocate('org.sonatype.inject', 'org.apsarasmc.libs.sonatype.inject')
+  relocate('org.eclipse.sisu', 'org.apsarasmc.libs.eclipse.sisu')
+  relocate('org.eclipse.aether', 'org.apsarasmc.libs.eclipse.aether')
   relocate('org.codehaus.plexus', 'org.apsarasmc.libs.codehaus.plexus')
   relocate('org.apache.maven', 'org.apsarasmc.libs.apache.maven')
   relocate('org.apache.http', 'org.apsarasmc.libs.apache.http')

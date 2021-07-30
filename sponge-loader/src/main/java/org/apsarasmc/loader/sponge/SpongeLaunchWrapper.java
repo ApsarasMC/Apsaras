@@ -63,7 +63,6 @@ public class SpongeLaunchWrapper extends URLClassLoader {
           c = super.getParent().loadClass(name);
         } catch (ClassNotFoundException ignore) {
           //
-          //
         }
       }
       if (c == null) {
