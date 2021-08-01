@@ -4,7 +4,9 @@ import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.Server;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
+import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.test.event.Handlers;
+import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,16 +15,17 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 
-public class TestCore implements Server {
+public class TestCore implements ImplServer {
   @Inject
   private Handlers handlers;
 
   public void init() {
     new ImplGame(new TestModule(binder -> {
-      binder.bind(Server.class).toInstance(this);
+      binder.bind(ImplServer.class).toInstance(this);
       binder.bind(TestCore.class).toInstance(this);
     }));
     Apsaras.injector().injectMembers(this);
@@ -77,5 +80,10 @@ public class TestCore implements Server {
   @Override
   public String version() {
     return "test";
+  }
+
+  @Override
+  public RelocatingRemapper remapper() {
+    return new RelocatingRemapper(Collections.emptyList());
   }
 }
