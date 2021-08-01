@@ -9,16 +9,6 @@ dependencies {
   implementation(project(':core'))
   implementation(project(':apsaras'))
 
-  compileOnly('com.google.code.findbugs:jsr305:3.0.2')
-  implementation('com.google.inject:guice:5.0.1') {
-    exclude group: 'com.google.guava', module: 'guava'
-  }
-  implementation('com.google.guava:guava:30.1.1-jre') {
-    exclude group: 'org.checkerframework', module: 'checker-qual'
-  }
-  implementation('org.slf4j:slf4j-api:1.7.32')
-  implementation('com.google.code.gson:gson:2.8.7')
-
   compileOnly('org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT') {
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.checkerframework', module: 'checker-qual'

@@ -1,26 +1,99 @@
 package org.apsarasmc.testplugin;
 
 import org.apsarasmc.apsaras.Apsaras;
+import org.apsarasmc.apsaras.aop.Component;
 import org.apsarasmc.apsaras.event.EventHandler;
 import org.apsarasmc.apsaras.event.Order;
 import org.apsarasmc.apsaras.event.lifecycle.ServerLoadEvent;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
+import org.apsarasmc.testplugin.aaa.TTT;
 
-import javax.inject.Inject;
-
+@Component
 public class TestCore {
+  public static final String TEST_CLASS = "org.apsarasmc.testplugin.aaa.TTT";
   private PluginContainer container;
 
-  @Inject
-  public TestCore(PluginContainer container) {
-    this.container = container;
-  }
+  public TestCore() {
+    container = Apsaras.injector().getInstance(PluginContainer.class);
+    ClassLoader classLoader = TestCore.class.getClassLoader();
+    container.logger().info("Thread.getContextClassLoader() : {}", Thread.currentThread().getContextClassLoader());
+    container.logger().info("class.getClassLoader() : {}", Thread.currentThread().getContextClassLoader());
+    String testName;
 
-  @EventHandler
-  public void o(ServerLoadEvent event) {
-    Apsaras.server().logger().warn("log by apsaras");
-    Apsaras.server().sync().run(container, () -> container.logger().warn("sync"));
-    Apsaras.server().uts().run(container, () -> container.logger().warn("uts"));
+    testName = "Direct use";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        TTT.class.getName());
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
+
+    testName = "Class.forName";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        Class.forName(TEST_CLASS).getName());
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
+
+    testName = "Reflection Class.forName(String)";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        ((Class<?>)Class.class.getMethod("forName", String.class)
+          .invoke(null, TEST_CLASS)).getName());
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
+
+    testName = "Class.forName(String,boolean,ClassLoader)";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        Class.forName(TEST_CLASS, false, classLoader).getName());
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
+
+    testName = "Reflection Class.forName(String,boolean,ClassLoader)";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        ((Class<?>)Class.class.getMethod("forName", String.class, boolean.class, ClassLoader.class)
+          .invoke(null, TEST_CLASS, false, classLoader)).getName());
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
+
+    testName = "ClassLoader.loadClass(String)";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        classLoader.loadClass(TEST_CLASS).getName());
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
+
+    testName = "Reflection ClassLoader.loadClass(String)";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        ((Class<?>)classLoader.getClass().getMethod("loadClass", String.class)
+          .invoke(classLoader, TEST_CLASS)).getName());
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
+
+    testName = "Class.getName()";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        TTT.class.getName());
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
+
+    testName = "Reflection Class.getName()";
+    try {
+      container.logger().info("Success: {} : {}", testName,
+        Class.class.getMethod("getName").invoke(TTT.class));
+    } catch (Exception e) {
+      container.logger().warn("Failure: {} : {}", testName, e);
+    }
   }
 
   @EventHandler (order = Order.PRE)

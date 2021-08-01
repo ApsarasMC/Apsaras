@@ -1,10 +1,14 @@
 package org.apsarasmc.sponge;
 
 
+import com.google.common.collect.ImmutableList;
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.Server;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
+import org.apsarasmc.plugin.ImplServer;
+import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
+import org.apsarasmc.plugin.util.relocate.Relocation;
 import org.apsarasmc.sponge.event.Handlers;
 import org.apsarasmc.sponge.scheduler.SyncScheduler;
 import org.apsarasmc.sponge.scheduler.UtsScheduler;
@@ -20,7 +24,21 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Singleton
-public class SpongeCore implements Server {
+public class SpongeCore implements ImplServer {
+  private static final RelocatingRemapper remapper = new RelocatingRemapper(
+    ImmutableList.< Relocation >builder()
+      .add(new Relocation("org{}sonatype{}inject", "org{}apsarasmc{}libs{}sonatype{}inject"))
+      .add(new Relocation("org{}eclipse{}sisu", "org{}apsarasmc{}libs{}eclipse{}sisu"))
+      .add(new Relocation("org{}eclipse{}aether", "org{}apsarasmc{}libs{}eclipse{}aether"))
+      .add(new Relocation("org{}codehaus{}plexus", "org{}apsarasmc{}libs{}codehaus{}plexus"))
+      .add(new Relocation("org{}apache{}maven", "org{}apsarasmc{}libs{}apache{}maven"))
+      .add(new Relocation("org{}apache{}http", "org{}apsarasmc{}libs{}apache{}http"))
+      .add(new Relocation("org{}apache{}commons", "org{}apsarasmc{}libs{}apache{}commons"))
+      .add(new Relocation("org{}yaml{}snakeyaml", "org{}apsarasmc{}libs{}snakeyaml"))
+      
+      .add(new Relocation("org{}apsarasmc{}testplugin{}aaa", "org{}apsarasmc{}testplugin{}bbb"))
+      .build()
+  );
   private final org.spongepowered.plugin.PluginContainer wrapper;
   @Inject
   private SyncScheduler syncScheduler;
@@ -35,10 +53,10 @@ public class SpongeCore implements Server {
 
   public void init() {
     new ImplGame(new SpongeModule(binder -> {
-      binder.bind(Server.class).toInstance(this);
+      binder.bind(ImplServer.class).toInstance(this);
       binder.bind(SpongeCore.class).toInstance(this);
     }));
-    Apsaras.injector().inject(this);
+    Apsaras.injector().injectMembers(this);
 
     try {
       Path pluginsPath = this.pluginPath().resolve("plugins");
@@ -92,6 +110,11 @@ public class SpongeCore implements Server {
 
   @Override
   public String version() {
-    return "Sponge" + this.wrapper().metadata().version();
+    return this.wrapper().metadata().version();
+  }
+
+  @Override
+  public RelocatingRemapper remapper() {
+    return remapper;
   }
 }

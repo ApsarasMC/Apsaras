@@ -7,6 +7,9 @@ public class ApsarasSetting {
   public boolean banner = true;
 
   @Comment ("Maven Repo")
-  @Comment ("In China, you should use \"https://maven.aliyun.com/repository/central\".")
-  public String[] mavenRepo = new String[] { "https://repo1.maven.org/maven2/" };
+  @Comment ("In China, you should use \"https://maven.aliyun.com/repository/central/\".")
+  public String[] mavenRepo = new String[] {
+    "https://repo1.maven.org/maven2/",
+    "https://www.jitpack.io/"
+  };
 }

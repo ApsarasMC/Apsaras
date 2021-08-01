@@ -1,15 +1,14 @@
 package org.apsarasmc.apsaras;
 
+import com.google.inject.Injector;
 import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.plugin.PluginManager;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 
 public class Apsaras {
   public static final String NAME = "apsaras";
-  @Inject
-  private static Game game;
+  private static Injector injector; // Fill by reflection
 
   private Apsaras() {
     //
@@ -17,29 +16,29 @@ public class Apsaras {
 
   @Nonnull
   public static Game game() {
-    if (Apsaras.game == null) {
-      throw new IllegalStateException("Apsaras has not been initialized!");
-    }
-    return Apsaras.game;
+    return injector().getInstance(Game.class);
   }
 
   @Nonnull
   public static Injector injector() {
-    return Apsaras.game().injector();
+    if (Apsaras.injector == null) {
+      throw new IllegalStateException("Apsaras has not been initialized!");
+    }
+    return Apsaras.injector;
   }
 
   @Nonnull
   public static Server server() {
-    return Apsaras.game().server();
+    return injector().getInstance(Server.class);
   }
 
   @Nonnull
   public static EventManager eventManager() {
-    return Apsaras.game().eventManager();
+    return injector().getInstance(EventManager.class);
   }
 
   @Nonnull
   public static PluginManager pluginManager() {
-    return Apsaras.game().pluginManager();
+    return injector().getInstance(PluginManager.class);
   }
 }

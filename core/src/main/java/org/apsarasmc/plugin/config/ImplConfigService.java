@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import org.yaml.snakeyaml.resolver.Resolver;
 
+import javax.inject.Singleton;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Path;
@@ -50,6 +51,7 @@ public class ImplConfigService< T > implements ConfigService< T > {
     }
   }
 
+  @Singleton
   public static class Factory implements ConfigService.Factory {
     @Override
     public < T > ConfigService< T > of(final PluginContainer pluginContainer, final String name, final Class< T > configClass) {

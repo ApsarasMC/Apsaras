@@ -3,6 +3,7 @@ package org.apsarasmc.plugin.util;
 import org.apsarasmc.apsaras.util.ResourceKey;
 
 import javax.annotation.Nonnull;
+import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,6 +50,7 @@ public class ImplResourceKey implements ResourceKey {
     return Objects.hash(namespace, value);
   }
 
+  @Singleton
   public static final class Factory implements ResourceKey.Factory {
     private final Map< ImplResourceKey, ImplResourceKey > resourceKeyMap = new ConcurrentHashMap<>();
 

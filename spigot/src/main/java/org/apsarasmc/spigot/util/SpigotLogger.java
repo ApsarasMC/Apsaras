@@ -6,6 +6,7 @@ import org.slf4j.helpers.MarkerIgnoringBase;
 import java.util.logging.Level;
 
 public class SpigotLogger extends MarkerIgnoringBase {
+  // Sorry for it, I won't.
   private final java.util.logging.Logger parent;
 
   public SpigotLogger(java.util.logging.Logger parent) {

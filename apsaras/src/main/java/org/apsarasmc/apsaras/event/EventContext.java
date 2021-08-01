@@ -11,7 +11,7 @@ public final class EventContext {
   private static final EventContext EMPTY_CONTEXT = new EventContext(new HashMap<>());
   private final Map< EventContextKey< Object >, Object > entries;
 
-  EventContext(Map< EventContextKey< Object >, Object > values) {
+  private EventContext(Map< EventContextKey< Object >, Object > values) {
     this.entries = new HashMap<>(values);
   }
 
@@ -31,11 +31,13 @@ public final class EventContext {
     return new Builder();
   }
 
+  @SuppressWarnings ("unchecked")
   public < T > Optional< T > get(EventContextKey< T > key) {
     Objects.requireNonNull(key, "EventContextKey cannot be null");
     return Optional.ofNullable((T) this.entries.get(key));
   }
 
+  @SuppressWarnings ("unchecked")
   public < T > Optional< T > get(Supplier< EventContextKey< T > > key) {
     Objects.requireNonNull(key, "EventContextKey cannot be null");
     return Optional.ofNullable((T) this.entries.get(key.get()));

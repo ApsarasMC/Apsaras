@@ -1,7 +1,16 @@
+pluginManagement {
+  repositories {
+    gradlePluginPortal()
+    mavenCentral()
+    mavenLocal()
+  }
+}
 include 'core'
 include 'apsaras'
 include 'spigot'
+include 'spigot-loader'
 include 'sponge'
+include 'sponge-loader'
 include 'testplugin'
 include 'spigot-loader'
-include 'sponge-loader'
+include 'annotation'

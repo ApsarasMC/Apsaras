@@ -47,6 +47,7 @@ public class DependencyResolver {
     Path dependencyPath = pluginContainer.dataPath().resolve("dependency");
     Files.createDirectories(dependencyPath);
 
+    // FIXME: Deprecated class DefaultServiceLocator
     DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
     locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
     locator.addService(TransporterFactory.class, HttpTransporterFactory.class);

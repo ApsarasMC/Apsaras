@@ -2,38 +2,45 @@ package org.apsarasmc.plugin.plugin;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 import org.apsarasmc.apsaras.Apsaras;
-import org.apsarasmc.apsaras.Server;
 import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.apsarasmc.apsaras.plugin.PluginDepend;
 import org.apsarasmc.apsaras.plugin.PluginMeta;
+import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.dependency.DependencyResolver;
 import org.apsarasmc.plugin.event.lifecycle.ImplPluginLifeEvent;
-import org.apsarasmc.plugin.util.ImplInjector;
 import org.apsarasmc.plugin.util.ImplPrefixLogger;
+import org.apsarasmc.plugin.util.StaticEntryUtil;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 public class JavaPluginContainer implements PluginContainer {
+  private static final Gson gson = new Gson();
   private final File jarFile;
   @Inject
   private DependencyResolver dependencyResolver;
   @Inject
   private EventManager eventManager;
   @Inject
-  private Server server;
+  private ImplServer server;
   private boolean enable = false;
   private JavaPluginLoader pluginLoader;
   private PluginMeta meta;
+  private Set< String > components;
   private Logger logger;
+  private Injector injector;
 
   public JavaPluginContainer(final @Nonnull File jarFile) {
-    Apsaras.injector().inject(this);
+    Apsaras.injector().injectMembers(this);
     this.jarFile = jarFile;
   }
 
@@ -41,6 +48,10 @@ public class JavaPluginContainer implements PluginContainer {
   public @Nonnull
   PluginMeta meta() {
     return this.meta;
+  }
+
+  public JavaPluginLoader pluginLoader() {
+    return pluginLoader;
   }
 
   @Override
@@ -61,18 +72,15 @@ public class JavaPluginContainer implements PluginContainer {
     return this.enable;
   }
 
+  public Injector injector() {
+    return injector;
+  }
+
   @Override
   public void load() throws Exception {
     this.pluginLoader = new JavaPluginLoader(jarFile.toURI().toURL(), Apsaras.server().classLoader());
-    InputStream metaStream = this.pluginLoader.getResourceAsStream("apsaras.json");
-    if (metaStream == null) {
-      throw new FileNotFoundException("No apsaras.json found in " + jarFile);
-    }
-    InputStreamReader metaReader = new InputStreamReader(metaStream);
-    this.meta = new Gson().fromJson(metaReader, ImplPluginMeta.class);
-    metaReader.close();
-    metaStream.close();
-
+    loadMeta();
+    loadComponents();
     for (PluginDepend depend : this.meta.depends()) {
       if (depend.type().equals(PluginDepend.Type.LIBRARY)) {
         this.pluginLoader.addURL(
@@ -83,19 +91,52 @@ public class JavaPluginContainer implements PluginContainer {
     eventManager.post(new ImplPluginLifeEvent.Load(this));
   }
 
+  private void loadMeta() throws Exception {
+    InputStream metaStream = this.pluginLoader.getResourceAsStream("META-INF/apsaras.json");
+    if (metaStream == null) {
+      throw new FileNotFoundException("No META-INF/apsaras.json found in " + jarFile);
+    }
+    InputStreamReader metaReader = new InputStreamReader(metaStream);
+    this.meta = gson.fromJson(metaReader, ImplPluginMeta.class);
+    metaReader.close();
+    metaStream.close();
+  }
+
+  private void loadComponents() throws Exception {
+    InputStream metaStream = this.pluginLoader.getResourceAsStream("META-INF/components.json");
+    if (metaStream == null) {
+      throw new FileNotFoundException("No META-INF/components.json found in " + jarFile);
+    }
+    InputStreamReader metaReader = new InputStreamReader(metaStream);
+    this.components = gson.fromJson(metaReader, Set.class);
+    metaReader.close();
+    metaStream.close();
+  }
+
   @Override
   public void enable() throws Exception {
     this.enable = true;
     this.logger = new ImplPrefixLogger(Apsaras.server().logger(), "[" + this.name() + "]: ");
+    this.pluginLoader.remapper(server.remapper());
+    StaticEntryUtil.applyPluginContainer(this.pluginLoader, this);
+
     Class< ? > mainClass = this.pluginLoader.loadClass(this.meta.main());
-    Object main = ((ImplInjector) Apsaras.injector())
-      .injector()
+    this.injector = Apsaras.injector()
       .createChildInjector(binder -> {
         binder.bind(PluginContainer.class).toInstance(this);
         binder.bind(Logger.class).toInstance(this.logger);
-      })
-      .getInstance(mainClass);
-    this.eventManager.registerListeners(this, main);
+        try {
+          ((Module) mainClass.getConstructor().newInstance()).configure(binder);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+          logger.warn("Failed to constructor {}'s Module class {}.", this.name(), mainClass.getName());
+        }
+      });
+    StaticEntryUtil.applyInjector(this.pluginLoader, injector);
+    for (String componentName : this.components) {
+      Class< ? > componentClass = this.pluginLoader.loadClass(componentName);
+      Object component = this.injector.getInstance(componentClass);
+      this.eventManager.registerListeners(this, component);
+    }
     eventManager.post(new ImplPluginLifeEvent.Enable(this));
   }
 

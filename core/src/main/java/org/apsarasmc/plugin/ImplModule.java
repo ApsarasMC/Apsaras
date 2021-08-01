@@ -2,6 +2,7 @@ package org.apsarasmc.plugin;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.apsarasmc.apsaras.Server;
 import org.apsarasmc.apsaras.config.ConfigService;
 import org.apsarasmc.apsaras.event.EventContextKey;
 import org.apsarasmc.apsaras.event.EventManager;
@@ -33,6 +34,8 @@ public class ImplModule implements Module {
   @Override
   public void configure(Binder binder) {
     applyModule.configure(binder);
+    // server
+    binder.bind(Server.class).to(ImplServer.class);
     // plugin
     binder.bind(PluginManager.class).to(ImplPluginManager.class);
     binder.bind(PluginDepend.Builder.class).to(ImplPluginDepend.Builder.class);

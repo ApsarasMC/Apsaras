@@ -1,19 +1,17 @@
 package org.apsarasmc.plugin;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.Game;
-import org.apsarasmc.apsaras.Injector;
 import org.apsarasmc.apsaras.Server;
 import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.apsarasmc.apsaras.plugin.PluginManager;
 import org.apsarasmc.plugin.setting.ApsarasSetting;
-import org.apsarasmc.plugin.util.ImplInjector;
+import org.apsarasmc.plugin.util.StaticEntryUtil;
 
-import java.lang.reflect.Field;
+import javax.inject.Inject;
 
 public class ImplGame implements Game {
   private final Injector injector;
@@ -31,26 +29,15 @@ public class ImplGame implements Game {
   private ApsarasPluginContainer self;
 
   public ImplGame(final Module module) {
-    this.injector = new ImplInjector(Guice.createInjector(new ImplModule(binder ->
+    this.injector = Guice.createInjector(new ImplModule(binder ->
       binder.bind(Game.class).toInstance(this)
-    ), module));
-    reflectSetGameField();
-    this.injector.inject(this);
+    ), module);
+    StaticEntryUtil.applyInjector(ImplGame.class.getClassLoader(), this.injector);
+    this.injector.injectMembers(this);
     this.pluginManager.addPlugin(self);
     if (this.setting.banner) {
+      // I don't want to log this
       this.bannerPrinter.print(System.out);
-    }
-  }
-
-  private void reflectSetGameField() {
-    try {
-      Field gameField = Apsaras.class.getDeclaredField("game");
-      gameField.setAccessible(true);
-      gameField.set(null, this);
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new RuntimeException(e);
     }
   }
 

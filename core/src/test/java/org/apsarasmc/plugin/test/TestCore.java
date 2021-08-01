@@ -25,7 +25,7 @@ public class TestCore implements Server {
       binder.bind(Server.class).toInstance(this);
       binder.bind(TestCore.class).toInstance(this);
     }));
-    Apsaras.injector().inject(this);
+    Apsaras.injector().injectMembers(this);
 
     try {
       Path pluginsPath = this.pluginPath().resolve("plugins");

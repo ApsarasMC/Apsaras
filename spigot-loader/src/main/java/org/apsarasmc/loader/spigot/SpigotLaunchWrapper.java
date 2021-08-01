@@ -11,6 +11,7 @@ public class SpigotLaunchWrapper extends JavaPlugin {
   public void onEnable() {
     try {
       String s = SpigotLaunchWrapper.class.getProtectionDomain().getCodeSource().getLocation().toString();
+      // No, no! I don't want to close UrlClassPath
       SpigotLoader spigotLoader = new SpigotLoader(
         new URL("jar:" + s + "!/"),
         SpigotLaunchWrapper.class.getClassLoader());

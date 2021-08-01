@@ -68,6 +68,17 @@ public class ImplListenerStruct< T extends Event > implements Comparable< ImplLi
 
   @Override
   public int compareTo(@Nonnull ImplListenerStruct< T > another) {
-    return this.order.compareTo(another.order);
+    int r = this.order.compareTo(another.order);
+    return r == 0 ? -1 : r;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(plugin, eventClass, order, beforeModifications, listener, listenerEvents);
   }
 }
