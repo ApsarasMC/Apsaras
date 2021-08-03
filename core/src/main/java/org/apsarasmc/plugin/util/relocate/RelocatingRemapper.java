@@ -1,6 +1,5 @@
 package org.apsarasmc.plugin.util.relocate;
 
-import org.apsarasmc.apsaras.Apsaras;
 import org.objectweb.asm.commons.Remapper;
 
 import java.util.Collection;

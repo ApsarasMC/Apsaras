@@ -1,7 +1,6 @@
 package org.apsarasmc.plugin.test;
 
 import org.apsarasmc.apsaras.Apsaras;
-import org.apsarasmc.apsaras.Server;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;

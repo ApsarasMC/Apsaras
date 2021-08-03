@@ -42,7 +42,7 @@ public class JavaPluginLoader extends URLClassLoader {
     String name = remapper.mapClass(unRelocatedName);
     synchronized (getClassLoadingLock(name)) {
       Class< ? > c = super.findLoadedClass(name);
-      if(c == null) {
+      if (c == null) {
         c = rewriteStaticEntry(name);
       }
       if (c == null) {

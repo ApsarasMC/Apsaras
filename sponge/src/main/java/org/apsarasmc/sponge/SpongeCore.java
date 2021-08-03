@@ -3,7 +3,6 @@ package org.apsarasmc.sponge;
 
 import com.google.common.collect.ImmutableList;
 import org.apsarasmc.apsaras.Apsaras;
-import org.apsarasmc.apsaras.Server;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
@@ -35,7 +34,7 @@ public class SpongeCore implements ImplServer {
       .add(new Relocation("org{}apache{}http", "org{}apsarasmc{}libs{}apache{}http"))
       .add(new Relocation("org{}apache{}commons", "org{}apsarasmc{}libs{}apache{}commons"))
       .add(new Relocation("org{}yaml{}snakeyaml", "org{}apsarasmc{}libs{}snakeyaml"))
-      
+
       .add(new Relocation("org{}apsarasmc{}testplugin{}aaa", "org{}apsarasmc{}testplugin{}bbb"))
       .build()
   );

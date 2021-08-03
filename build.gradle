@@ -26,6 +26,13 @@ subprojects {
     }
     repositories {
       mavenLocal()
+      maven {
+        url 'https://apsarasmc-maven.pkg.coding.net/repository/apsarasmc/apsaras/'
+        credentials {
+          username "${artifactsGradleUsername}"
+          password "${artifactsGradlePassword}"
+        }
+      }
     }
   }
 }

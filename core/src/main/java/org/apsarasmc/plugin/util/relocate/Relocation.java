@@ -8,10 +8,10 @@ public final class Relocation {
 
 
   public Relocation(String pattern, String relocatedPattern) {
-    this.pattern = pattern.replace("{}",".").replace('/', '.');
-    this.pathPattern = pattern.replace("{}","/").replace('.', '/');
-    this.relocatedPattern = relocatedPattern.replace("{}",".").replace('/', '.');
-    this.relocatedPathPattern = relocatedPattern.replace("{}","/").replace('.', '/');
+    this.pattern = pattern.replace("{}", ".").replace('/', '.');
+    this.pathPattern = pattern.replace("{}", "/").replace('.', '/');
+    this.relocatedPattern = relocatedPattern.replace("{}", ".").replace('/', '.');
+    this.relocatedPathPattern = relocatedPattern.replace("{}", "/").replace('.', '/');
   }
 
   boolean canRelocatePath(String path) {

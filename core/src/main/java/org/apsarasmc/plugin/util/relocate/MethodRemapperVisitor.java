@@ -11,28 +11,30 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MethodRemapperVisitor extends MethodRemapper {
-  public static final Map<MethodRelocate, MethodRelocate> methodRelocateMap;
+  public static final Map< MethodRelocate, MethodRelocate > methodRelocateMap;
+
   static {
-    Map<MethodRelocate, MethodRelocate> methodRelocateMap1 = new HashMap<>();
-    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKESTATIC, "java/lang/Class","forName","(Ljava/lang/String;)Ljava/lang/Class;"),
+    Map< MethodRelocate, MethodRelocate > methodRelocateMap1 = new HashMap<>();
+    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;)Ljava/lang/Class;"),
       new MethodRelocate(Opcodes.INVOKESTATIC, "org/apsarasmc/plugin/util/relocate/PluginContainerEntry", "forName", "(Ljava/lang/String;)Ljava/lang/Class;"));
-    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKESTATIC, "java/lang/Class","forName","(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;"),
+    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;"),
       new MethodRelocate(Opcodes.INVOKESTATIC, "org/apsarasmc/plugin/util/relocate/PluginContainerEntry", "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;"));
-    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKEVIRTUAL, "java/lang/Class","getName","()Ljava/lang/String;"),
+    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "getName", "()Ljava/lang/String;"),
       new MethodRelocate(Opcodes.INVOKESTATIC, "org/apsarasmc/plugin/util/relocate/PluginContainerEntry", "getName", "(Ljava/lang/Class;)Ljava/lang/String;"));
-    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKEVIRTUAL, "java/lang/Class","getSimpleName","()Ljava/lang/String;"),
+    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "getSimpleName", "()Ljava/lang/String;"),
       new MethodRelocate(Opcodes.INVOKESTATIC, "org/apsarasmc/plugin/util/relocate/PluginContainerEntry", "getSimpleName", "(Ljava/lang/Class;)Ljava/lang/String;"));
-    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKEVIRTUAL, "java/lang/Thread","getContextClassLoader","()Ljava/lang/ClassLoader;"),
+    methodRelocateMap1.put(new MethodRelocate(Opcodes.INVOKEVIRTUAL, "java/lang/Thread", "getContextClassLoader", "()Ljava/lang/ClassLoader;"),
       new MethodRelocate(Opcodes.INVOKESTATIC, "org/apsarasmc/plugin/util/relocate/PluginContainerEntry", "getContextClassLoader", "(Ljava/lang/Thread;)Ljava/lang/ClassLoader;"));
     methodRelocateMap = Collections.unmodifiableMap(methodRelocateMap1);
   }
+
   public MethodRemapperVisitor(MethodVisitor methodVisitor, Remapper remapper) {
     super(methodVisitor, remapper);
   }
 
   @Override
   public void visitMethodInsn(int opcodeAndSource, String owner, String name, String descriptor, boolean isInterface) {
-    MethodRelocate input = new MethodRelocate(opcodeAndSource,owner,name,descriptor);
+    MethodRelocate input = new MethodRelocate(opcodeAndSource, owner, name, descriptor);
     MethodRelocate output = methodRelocateMap.get(input);
     output = output == null ? input : output;
     if (mv != null) {

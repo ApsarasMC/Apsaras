@@ -2,9 +2,7 @@ package org.apsarasmc.plugin.util;
 
 import com.google.inject.Injector;
 import org.apsarasmc.apsaras.Apsaras;
-import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.apsarasmc.plugin.plugin.JavaPluginContainer;
-import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.apsarasmc.plugin.util.relocate.PluginContainerEntry;
 
 import java.io.ByteArrayOutputStream;
@@ -73,7 +71,7 @@ public class StaticEntryUtil {
           inputStream.close();
           return outputStream.toByteArray();
         }
-      }finally {
+      } finally {
         inputStream.close();
       }
     } catch (IOException ex) {
@@ -84,7 +82,7 @@ public class StaticEntryUtil {
   public static JavaPluginContainer getPluginContainer(ClassLoader classLoader) {
     try {
       return (JavaPluginContainer) classLoader.loadClass(REMAP_ENTRY_CLASS).getMethod("container").invoke(null);
-    }catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
+    } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       return null;
     }
   }
@@ -92,7 +90,7 @@ public class StaticEntryUtil {
   public static Injector getInjector(ClassLoader classLoader) {
     try {
       return (Injector) classLoader.loadClass(APSARAS_ENTRY_CLASS).getMethod("injector").invoke(null);
-    }catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
+    } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       return null;
     }
   }
