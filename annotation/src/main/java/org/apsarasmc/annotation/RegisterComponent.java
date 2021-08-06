@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @SupportedAnnotationTypes ({
-  "org.apsarasmc.apsaras.aop.Component"
+  "org.apsarasmc.apsaras.aop.AutoComponent"
 })
 @SupportedSourceVersion (SourceVersion.RELEASE_8)
 public class RegisterComponent extends AbstractProcessor {
