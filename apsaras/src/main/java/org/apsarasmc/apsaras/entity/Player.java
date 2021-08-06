@@ -8,13 +8,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface Player extends Entity, Audience {
-  static Player.Factory factory(){
+  static Player.Factory factory() {
     return Apsaras.injector().getInstance(Player.Factory.class);
   }
+
   boolean isOnline();
 
-  interface Factory{
+  interface Factory {
     Optional< Player > byName(@Nonnull String name);
+
     Optional< Player > byUUID(@Nonnull UUID uuid);
   }
 }

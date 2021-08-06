@@ -7,9 +7,9 @@ import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.event.Order;
 import org.apsarasmc.apsaras.event.message.ChatEvent;
 import org.apsarasmc.plugin.ApsarasPluginContainer;
+import org.apsarasmc.plugin.event.EventTransfer;
 import org.apsarasmc.plugin.setting.ApsarasSetting;
 import org.apsarasmc.spigot.entity.SpigotPlayer;
-import org.apsarasmc.plugin.event.EventTransfer;
 import org.apsarasmc.spigot.util.EventUtil;
 import org.apsarasmc.spigot.util.TextComponentUtil;
 import org.bukkit.entity.Player;
@@ -34,13 +34,13 @@ public class MessageTransfer implements EventTransfer {
     EventUtil.listen(AsyncPlayerChatEvent.class, event -> new SpigotChatEvent(event, new SpigotPlayer(event.getPlayer())));
   }
 
-  @EventHandler(order = Order.POST)
-  public void evalChatEvent(SpigotChatEvent e){
+  @EventHandler (order = Order.POST)
+  public void evalChatEvent(SpigotChatEvent e) {
     if (e.cancelled() || !apsarasSetting.enableHandleChatFormatter) {
       return;
     }
-    Optional< ChatEvent.ChatFormatter > optional =  e.chatFormatter();
-    if(optional.isPresent()){
+    Optional< ChatEvent.ChatFormatter > optional = e.chatFormatter();
+    if (optional.isPresent()) {
       e.cancel();
       for (Player recipient : e.handle.getRecipients()) {
         BaseComponent[] messageComponents = TextComponentUtil.toBukkit(optional.get().format(e, new SpigotPlayer(recipient)));

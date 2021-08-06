@@ -5,7 +5,7 @@ public interface Cancellable extends Event {
 
   void cancelled(boolean cancel);
 
-  default void cancel(){
+  default void cancel() {
     cancelled(true);
   }
 }

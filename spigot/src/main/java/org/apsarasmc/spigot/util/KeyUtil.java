@@ -12,7 +12,7 @@ public class KeyUtil {
     return NamespacedKey.fromString(key.toString());
   }
 
-  public static ResourceKey to(NamespacedKey key){
+  public static ResourceKey to(NamespacedKey key) {
     return ResourceKey.factory().of(key.getNamespace(), key.getKey());
   }
 }

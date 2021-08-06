@@ -3,7 +3,6 @@ package org.apsarasmc.sponge.event.message;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.entity.Player;
 import org.apsarasmc.apsaras.event.EventContext;
 import org.apsarasmc.apsaras.event.message.ChatEvent;
@@ -43,7 +42,7 @@ public class SpongeChatEvent implements ChatEvent {
   @Override
   public Optional< ChatFormatter > chatFormatter() {
     return handle.chatFormatter().map(sponge -> {
-      if(sponge instanceof ToSpongeChatFormatter){
+      if (sponge instanceof ToSpongeChatFormatter) {
         return ((ToSpongeChatFormatter) sponge).apsaras;
       }
       return new ToApsarasChatFormatter(sponge);
@@ -52,9 +51,9 @@ public class SpongeChatEvent implements ChatEvent {
 
   @Override
   public void setChatFormatter(@Nullable ChatEvent.ChatFormatter router) {
-    if(router instanceof ToApsarasChatFormatter){
+    if (router instanceof ToApsarasChatFormatter) {
       handle.setChatFormatter(((ToApsarasChatFormatter) router).sponge);
-    }else {
+    } else {
       handle.setChatFormatter(new ToSpongeChatFormatter(this, router));
     }
   }
@@ -81,13 +80,15 @@ public class SpongeChatEvent implements ChatEvent {
 
   public static class ToApsarasChatFormatter implements ChatFormatter {
     private final PlayerChatFormatter sponge;
-    public ToApsarasChatFormatter(PlayerChatFormatter sponge){
+
+    public ToApsarasChatFormatter(PlayerChatFormatter sponge) {
       this.sponge = sponge;
     }
+
     @Override
     public Component format(ChatEvent event, Player receiver) {
       return sponge.format(
-        ((SpongePlayer)event.sender()).handle,
+        ((SpongePlayer) event.sender()).handle,
         receiver,
         Component.text(event.message()),
         Component.text(event.originalMessage())).orElse(null);
@@ -97,19 +98,20 @@ public class SpongeChatEvent implements ChatEvent {
   public static class ToSpongeChatFormatter implements PlayerChatFormatter {
     private final SpongeChatEvent event;
     private final ChatFormatter apsaras;
-    public ToSpongeChatFormatter(SpongeChatEvent event, ChatFormatter apsaras){
+
+    public ToSpongeChatFormatter(SpongeChatEvent event, ChatFormatter apsaras) {
       this.event = event;
       this.apsaras = apsaras;
     }
 
     @Override
     public Optional< Component > format(ServerPlayer player, Audience target, Component message, Component originalMessage) {
-      if(target instanceof ServerPlayer){
+      if (target instanceof ServerPlayer) {
         return Optional.ofNullable(
           apsaras.format(event, new SpongePlayer((ServerPlayer) target))
         );
-      }else{
-        return event.handle.originalChatFormatter().format(player,target,message,originalMessage);
+      } else {
+        return event.handle.originalChatFormatter().format(player, target, message, originalMessage);
       }
     }
   }

@@ -12,12 +12,13 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class TextComponentUtil {
+  public static final Map< MessageType, ChatMessageType > messageToBukkit
+    = new EnumMap<>(MessageType.class);
   private static final ApsarasSetting apsarasSetting = Apsaras.injector().getInstance(ApsarasSetting.class);
   private static final BungeeComponentSerializer serializer = apsarasSetting.messageLegacy
     ? BungeeComponentSerializer.legacy()
     : BungeeComponentSerializer.get();
-  public static final Map<MessageType, ChatMessageType> messageToBukkit
-    = new EnumMap<>(MessageType.class);
+
   static {
     messageToBukkit.put(MessageType.CHAT, ChatMessageType.CHAT);
     messageToBukkit.put(MessageType.SYSTEM, ChatMessageType.SYSTEM);
@@ -27,7 +28,7 @@ public class TextComponentUtil {
     //
   }
 
-  public static ChatMessageType toBukkit(MessageType adventure){
+  public static ChatMessageType toBukkit(MessageType adventure) {
     return messageToBukkit.get(adventure);
   }
 
@@ -35,7 +36,7 @@ public class TextComponentUtil {
     return serializer.serialize(adventure);
   }
 
-  public static Component toAdventure(BaseComponent... bungee){
+  public static Component toAdventure(BaseComponent... bungee) {
     return serializer.deserialize(bungee);
   }
 }

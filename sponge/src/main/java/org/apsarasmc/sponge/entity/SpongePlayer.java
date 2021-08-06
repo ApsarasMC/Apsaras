@@ -23,9 +23,11 @@ import java.util.UUID;
 
 public class SpongePlayer implements ImplPlayer {
   public final ServerPlayer handle;
-  public SpongePlayer(ServerPlayer player){
+
+  public SpongePlayer(ServerPlayer player) {
     this.handle = player;
   }
+
   @Override
   @Nonnull
   public UUID uuid() {
@@ -49,7 +51,7 @@ public class SpongePlayer implements ImplPlayer {
 
   @Override
   public void sendMessage(@Nonnull Identity source, @Nonnull Component message, @Nonnull MessageType type) {
-    handle.sendMessage(source,message,type);
+    handle.sendMessage(source, message, type);
   }
 
   @Override
@@ -132,7 +134,7 @@ public class SpongePlayer implements ImplPlayer {
       return nullableCast(Sponge.server().player(uuid));
     }
 
-    public Optional< Player > nullableCast(Optional<ServerPlayer> player){
+    public Optional< Player > nullableCast(Optional< ServerPlayer > player) {
       return player.map(SpongePlayer::new);
     }
   }

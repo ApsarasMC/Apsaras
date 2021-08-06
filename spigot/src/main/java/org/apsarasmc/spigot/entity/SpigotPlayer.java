@@ -9,14 +9,12 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.SoundStop;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.entity.Player;
 import org.apsarasmc.apsaras.util.ResourceKey;
 import org.apsarasmc.plugin.entity.ImplPlayer;
 import org.apsarasmc.spigot.util.KeyUtil;
-import org.apsarasmc.spigot.util.TextComponentUtil;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,10 +31,11 @@ public class SpigotPlayer implements ImplPlayer {
   @Nonnull
   private final Audience adventure;
 
-  public SpigotPlayer(final @Nonnull org.bukkit.entity.Player handle){
+  public SpigotPlayer(final @Nonnull org.bukkit.entity.Player handle) {
     this.handle = handle;
     adventure = Apsaras.injector().getInstance(BukkitAudiences.class).player(this.handle);
   }
+
   @Override
   public UUID uuid() {
     return handle.getUniqueId();
@@ -70,7 +69,7 @@ public class SpigotPlayer implements ImplPlayer {
 
   @Override
   public void sendMessage(@NotNull Identity source, @NotNull Component message, @NotNull MessageType type) {
-    adventure.sendMessage(source,message,type);
+    adventure.sendMessage(source, message, type);
   }
 
   @Override

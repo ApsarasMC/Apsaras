@@ -10,14 +10,13 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class SpigotChatEvent implements ChatEvent {
-  private final EventContext context = EventContext.builder().build();
   public final AsyncPlayerChatEvent handle;
-
+  private final EventContext context = EventContext.builder().build();
   private final Player sender;
   private final String originalMessage;
-  private Optional<ChatEvent.ChatFormatter> chatFormatter = Optional.empty();
+  private Optional< ChatEvent.ChatFormatter > chatFormatter = Optional.empty();
 
-  public SpigotChatEvent(AsyncPlayerChatEvent handle, Player sender){
+  public SpigotChatEvent(AsyncPlayerChatEvent handle, Player sender) {
     this.handle = handle;
     this.sender = sender;
     this.originalMessage = handle.getMessage();
@@ -29,7 +28,7 @@ public class SpigotChatEvent implements ChatEvent {
   }
 
   @Override
-  public Optional<ChatEvent.ChatFormatter> chatFormatter() {
+  public Optional< ChatEvent.ChatFormatter > chatFormatter() {
     return chatFormatter;
   }
 
