@@ -8,7 +8,7 @@ import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.apsarasmc.plugin.util.relocate.Relocation;
-import org.apsarasmc.sponge.event.Handlers;
+import org.apsarasmc.sponge.event.Transfers;
 import org.apsarasmc.sponge.scheduler.SyncScheduler;
 import org.apsarasmc.sponge.scheduler.UtsScheduler;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class SpongeCore implements ImplServer {
   @Inject
   private UtsScheduler utsScheduler;
   @Inject
-  private Handlers handlers;
+  private Transfers transfers;
 
   public SpongeCore(final org.spongepowered.plugin.PluginContainer wrapper) {
     this.wrapper = wrapper;
@@ -70,7 +70,7 @@ public class SpongeCore implements ImplServer {
     Apsaras.pluginManager().enable();
 
     Sponge.eventManager().registerListeners(this.wrapper, this);
-    this.handlers.register();
+    this.transfers.register();
   }
 
   public org.spongepowered.plugin.PluginContainer wrapper() {

@@ -1,6 +1,7 @@
 package org.apsarasmc.spigot.event;
 
 import org.apsarasmc.apsaras.Apsaras;
+import org.apsarasmc.plugin.event.EventTransfer;
 import org.apsarasmc.plugin.event.lifecycle.ImplServerLoadEvent;
 import org.apsarasmc.spigot.util.EventUtil;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -8,7 +9,7 @@ import org.bukkit.event.server.ServerLoadEvent;
 import javax.inject.Singleton;
 
 @Singleton
-public class LifeCycleHandler implements EventHandler {
+public class LifeCycleTransfer implements EventTransfer {
   @Override
   public void register() {
     EventUtil.listen(ServerLoadEvent.class, event -> {

@@ -1,7 +1,11 @@
 package org.apsarasmc.apsaras.event;
 
 public interface Cancellable extends Event {
-  boolean isCancelled();
+  boolean cancelled();
 
-  void setCancelled(boolean cancel);
+  void cancelled(boolean cancel);
+
+  default void cancel(){
+    cancelled(true);
+  }
 }

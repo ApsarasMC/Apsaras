@@ -50,6 +50,12 @@ public class ImplResourceKey implements ResourceKey {
     return Objects.hash(namespace, value);
   }
 
+  @Override
+  public @Nonnull
+  String toString() {
+    return asString();
+  }
+
   @Singleton
   public static final class Factory implements ResourceKey.Factory {
     private final Map< ImplResourceKey, ImplResourceKey > resourceKeyMap = new ConcurrentHashMap<>();

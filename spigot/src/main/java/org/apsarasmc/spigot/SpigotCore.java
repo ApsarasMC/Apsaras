@@ -1,13 +1,14 @@
 package org.apsarasmc.spigot;
 
 import com.google.common.collect.ImmutableList;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.apsarasmc.plugin.util.relocate.Relocation;
-import org.apsarasmc.spigot.event.Handlers;
+import org.apsarasmc.spigot.event.Transfers;
 import org.apsarasmc.spigot.scheduler.SyncScheduler;
 import org.apsarasmc.spigot.scheduler.UtsScheduler;
 import org.bukkit.Bukkit;
@@ -46,7 +47,7 @@ public class SpigotCore implements ImplServer, Listener {
   @Inject
   private UtsScheduler utsScheduler;
   @Inject
-  private Handlers handlers;
+  private Transfers transfers;
 
   public SpigotCore(final JavaPlugin wrapper) {
     this.wrapper = wrapper;
@@ -60,6 +61,7 @@ public class SpigotCore implements ImplServer, Listener {
     new ImplGame(new SpigotModule(binder -> {
       binder.bind(ImplServer.class).toInstance(this);
       binder.bind(SpigotCore.class).toInstance(this);
+      binder.bind(BukkitAudiences.class).toInstance(BukkitAudiences.create(this.wrapper));
     }));
     Apsaras.injector().injectMembers(this);
 
@@ -76,7 +78,7 @@ public class SpigotCore implements ImplServer, Listener {
     Apsaras.pluginManager().enable();
 
     Bukkit.getPluginManager().registerEvents(this, this.wrapper);
-    this.handlers.register();
+    this.transfers.register();
   }
 
   @Override

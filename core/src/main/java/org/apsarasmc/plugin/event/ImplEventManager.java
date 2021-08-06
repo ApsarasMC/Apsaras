@@ -115,7 +115,7 @@ public class ImplEventManager implements EventManager {
   public boolean post(Event event) {
     poster(event).post();
     if (event instanceof Cancellable) {
-      return ((Cancellable) event).isCancelled();
+      return ((Cancellable) event).cancelled();
     } else {
       return true;
     }

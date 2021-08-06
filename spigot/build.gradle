@@ -1,5 +1,9 @@
 repositories {
   maven {
+    name = "sonatype-oss-snapshots"
+    url = "https://oss.sonatype.org/content/repositories/snapshots/"
+  }
+  maven {
     name = 'spigotmc-repo'
     url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
   }
@@ -8,6 +12,9 @@ repositories {
 dependencies {
   implementation(project(':core'))
   implementation(project(':apsaras'))
+  implementation 'net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT'
+  implementation 'net.kyori:adventure-platform-bungeecord:4.0.0-SNAPSHOT'
+
 
   compileOnly('org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT') {
     exclude group: 'com.google.guava', module: 'guava'

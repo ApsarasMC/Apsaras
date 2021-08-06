@@ -3,6 +3,7 @@ package org.apsarasmc.annotation;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import org.apsarasmc.apsaras.aop.ApsarasPlugin;
+import org.apsarasmc.apsaras.aop.Dependency;
 import org.apsarasmc.plugin.plugin.ImplPluginDepend;
 import org.apsarasmc.plugin.plugin.ImplPluginMeta;
 import org.apsarasmc.plugin.plugin.ImplPluginUrls;
@@ -43,7 +44,7 @@ public class RegisterApsarasPlugin extends AbstractProcessor {
         .version(Strings.emptyToNull(apsarasPlugin.version()))
         .describe(Strings.emptyToNull(apsarasPlugin.describe()))
         .main(((TypeElement) elementOptional.get()).getQualifiedName().toString());
-      for (ApsarasPlugin.Dependency dependency : apsarasPlugin.dependency()) {
+      for (Dependency dependency : apsarasPlugin.dependency()) {
         builder.depend(new ImplPluginDepend.Builder().type(dependency.type()).name(dependency.name()));
       }
       builder.urls(
