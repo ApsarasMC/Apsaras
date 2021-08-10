@@ -2,7 +2,9 @@ package org.apsarasmc.plugin;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.apsarasmc.apsaras.Game;
 import org.apsarasmc.apsaras.Server;
+import org.apsarasmc.apsaras.command.CommandResult;
 import org.apsarasmc.apsaras.config.ConfigService;
 import org.apsarasmc.apsaras.event.EventContextKey;
 import org.apsarasmc.apsaras.event.EventManager;
@@ -12,6 +14,7 @@ import org.apsarasmc.apsaras.plugin.PluginMeta;
 import org.apsarasmc.apsaras.plugin.PluginUrls;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.apsaras.util.ResourceKey;
+import org.apsarasmc.plugin.command.ImplCommandResult;
 import org.apsarasmc.plugin.config.ImplConfigService;
 import org.apsarasmc.plugin.event.ImplEventContextKey;
 import org.apsarasmc.plugin.event.ImplEventManager;
@@ -34,6 +37,9 @@ public class ImplModule implements Module {
   @Override
   public void configure(Binder binder) {
     applyModule.configure(binder);
+    binder.bind(Game.class).to(ImplGame.class);
+    // command
+    binder.bind(CommandResult.Builder.class).to(ImplCommandResult.Builder.class);
     // server
     binder.bind(Server.class).to(ImplServer.class);
     // plugin

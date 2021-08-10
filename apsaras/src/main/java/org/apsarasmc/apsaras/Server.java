@@ -1,5 +1,6 @@
 package org.apsarasmc.apsaras;
 
+import org.apsarasmc.apsaras.command.CommandManager;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.slf4j.Logger;
 
@@ -13,6 +14,8 @@ public interface Server {
   Logger logger();
 
   ClassLoader classLoader();
+
+  CommandManager commandManager();
 
   Path gamePath();
 

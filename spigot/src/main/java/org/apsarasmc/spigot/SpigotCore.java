@@ -3,22 +3,28 @@ package org.apsarasmc.spigot;
 import com.google.common.collect.ImmutableList;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.apsarasmc.apsaras.Apsaras;
+import org.apsarasmc.apsaras.command.CommandManager;
+import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.apsarasmc.plugin.util.relocate.Relocation;
 import org.apsarasmc.spigot.event.Transfers;
+import org.apsarasmc.spigot.event.lifecycle.SpigotLoadPluginEvent;
 import org.apsarasmc.spigot.scheduler.SyncScheduler;
 import org.apsarasmc.spigot.scheduler.UtsScheduler;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -43,11 +49,17 @@ public class SpigotCore implements ImplServer, Listener {
   );
   private JavaPlugin wrapper;
   @Inject
+  private ImplGame game;
+  @Inject
   private SyncScheduler syncScheduler;
   @Inject
   private UtsScheduler utsScheduler;
   @Inject
   private Transfers transfers;
+  @Inject
+  private CommandManager commandManager;
+  @Inject
+  private EventManager eventManager;
 
   public SpigotCore(final JavaPlugin wrapper) {
     this.wrapper = wrapper;
@@ -57,7 +69,7 @@ public class SpigotCore implements ImplServer, Listener {
     return this.wrapper;
   }
 
-  public void init() {
+  public void enable() {
     new ImplGame(new SpigotModule(binder -> {
       binder.bind(ImplServer.class).toInstance(this);
       binder.bind(SpigotCore.class).toInstance(this);
@@ -74,11 +86,14 @@ public class SpigotCore implements ImplServer, Listener {
     } catch (Exception e) {
       this.logger().warn("Failed to open plugins dir.", e);
     }
-    Apsaras.pluginManager().load();
-    Apsaras.pluginManager().enable();
-
-    Bukkit.getPluginManager().registerEvents(this, this.wrapper);
     this.transfers.register();
+
+    game.enable();
+    eventManager.post(new SpigotLoadPluginEvent.RegisterCommand());
+  }
+
+  public void disable() {
+    game.disable();
   }
 
   @Override
@@ -99,6 +114,11 @@ public class SpigotCore implements ImplServer, Listener {
   @Override
   public ClassLoader classLoader() {
     return SpigotCore.class.getClassLoader();
+  }
+
+  @Override
+  public CommandManager commandManager() {
+    return this.commandManager;
   }
 
   @Override

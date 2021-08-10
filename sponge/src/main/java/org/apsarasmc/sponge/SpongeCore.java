@@ -2,18 +2,30 @@ package org.apsarasmc.sponge;
 
 
 import com.google.common.collect.ImmutableList;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.Component;
 import org.apsarasmc.apsaras.Apsaras;
+import org.apsarasmc.apsaras.command.CommandManager;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.apsarasmc.plugin.util.relocate.Relocation;
 import org.apsarasmc.sponge.event.Transfers;
+import org.apsarasmc.sponge.event.lifecycle.SpongeLoadPluginEvent;
 import org.apsarasmc.sponge.scheduler.SyncScheduler;
 import org.apsarasmc.sponge.scheduler.UtsScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.event.EventListenerRegistration;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
+import org.spongepowered.api.event.lifecycle.StoppedGameEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,6 +51,8 @@ public class SpongeCore implements ImplServer {
       .build()
   );
   private final org.spongepowered.plugin.PluginContainer wrapper;
+  @Inject
+  private ImplGame game;
   @Inject
   private SyncScheduler syncScheduler;
   @Inject
@@ -66,11 +80,33 @@ public class SpongeCore implements ImplServer {
     } catch (Exception e) {
       this.logger().warn("Failed to open plugins dir.", e);
     }
-    Apsaras.pluginManager().load();
-    Apsaras.pluginManager().enable();
 
-    Sponge.eventManager().registerListeners(this.wrapper, this);
     this.transfers.register();
+    game.enable();
+    Sponge.eventManager().registerListener(
+      EventListenerRegistration
+        .builder(StoppedGameEvent.class)
+        .plugin(this.wrapper)
+        .listener(e-> game.disable())
+        .order(Order.DEFAULT)
+        .build()
+    );
+    Sponge.eventManager().registerListeners(this.wrapper, this);
+  }
+
+  @Listener
+  public void onCommandRegister(final RegisterCommandEvent<Command.Parameterized> event){
+    event.register(
+      this.wrapper,
+      Command
+        .builder()
+        .addParameter(Parameter.integerNumber().key("aaa").build())
+        .executor((context -> {
+          context.sendMessage(Identity.nil(), Component.text("wwwwwwwwww"));
+          return CommandResult.success();
+        }))
+        .build(),
+      "cccccccccccc");
   }
 
   public org.spongepowered.plugin.PluginContainer wrapper() {
@@ -95,6 +131,11 @@ public class SpongeCore implements ImplServer {
   @Override
   public ClassLoader classLoader() {
     return SpongeCore.class.getClassLoader();
+  }
+
+  @Override
+  public CommandManager commandManager() {
+    return null;
   }
 
   @Override

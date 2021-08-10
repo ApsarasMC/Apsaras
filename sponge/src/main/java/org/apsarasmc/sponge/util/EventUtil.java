@@ -1,5 +1,6 @@
 package org.apsarasmc.sponge.util;
 
+import io.leangen.geantyref.TypeToken;
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.plugin.event.EventPoster;
 import org.apsarasmc.plugin.event.ImplEventManager;
@@ -26,6 +27,11 @@ public class EventUtil {
 
   public static < T extends org.spongepowered.api.event.Event > void listen(
     Class< T > eventType, Transfer< T > transfer) {
+    listen(TypeToken.get(eventType),transfer);
+  }
+
+  public static < T extends org.spongepowered.api.event.Event > void listen(
+    TypeToken< T > eventType, Transfer< T > transfer) {
     Listener< T > listener = new Listener<>(transfer);
     for (org.spongepowered.api.event.Order value : org.spongepowered.api.event.Order.values()) {
       final org.apsarasmc.apsaras.event.Order order = PriorityUtil.of(value);

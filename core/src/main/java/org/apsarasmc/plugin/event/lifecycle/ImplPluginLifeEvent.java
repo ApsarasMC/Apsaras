@@ -4,7 +4,7 @@ import org.apsarasmc.apsaras.event.EventContext;
 import org.apsarasmc.apsaras.event.lifecycle.PluginLifeEvent;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
 
-public class ImplPluginLifeEvent implements PluginLifeEvent {
+public abstract class ImplPluginLifeEvent implements PluginLifeEvent {
   private final EventContext context = EventContext.builder().build();
   private final PluginContainer plugin;
 

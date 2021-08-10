@@ -7,13 +7,12 @@ import org.apsarasmc.apsaras.entity.Player;
 import org.apsarasmc.apsaras.event.EventContext;
 import org.apsarasmc.apsaras.event.message.ChatEvent;
 import org.apsarasmc.sponge.entity.SpongePlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.entity.living.player.PlayerChatFormatter;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.message.PlayerChatEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class SpongeChatEvent implements ChatEvent {
@@ -69,7 +68,7 @@ public class SpongeChatEvent implements ChatEvent {
   }
 
   @Override
-  public void setMessage(@NotNull String message) {
+  public void setMessage(@Nonnull String message) {
     handle.setMessage(Component.text(message));
   }
 

@@ -3,8 +3,8 @@ package org.apsarasmc.plugin.plugin;
 import org.apsarasmc.plugin.util.StaticEntryUtil;
 import org.apsarasmc.plugin.util.relocate.AsmRelocate;
 import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;

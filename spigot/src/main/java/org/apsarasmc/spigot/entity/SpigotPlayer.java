@@ -16,7 +16,6 @@ import org.apsarasmc.apsaras.util.ResourceKey;
 import org.apsarasmc.plugin.entity.ImplPlayer;
 import org.apsarasmc.spigot.util.KeyUtil;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,47 +67,47 @@ public class SpigotPlayer implements ImplPlayer {
   }
 
   @Override
-  public void sendMessage(@NotNull Identity source, @NotNull Component message, @NotNull MessageType type) {
+  public void sendMessage(@Nonnull Identity source, @Nonnull Component message, @Nonnull MessageType type) {
     adventure.sendMessage(source, message, type);
   }
 
   @Override
-  public void playSound(@NotNull Sound sound) {
+  public void playSound(@Nonnull Sound sound) {
     adventure.playSound(sound);
   }
 
   @Override
-  public void playSound(@NotNull Sound sound, double x, double y, double z) {
+  public void playSound(@Nonnull Sound sound, double x, double y, double z) {
     adventure.playSound(sound, x, y, z);
   }
 
   @Override
-  public void stopSound(@NotNull Sound sound) {
+  public void stopSound(@Nonnull Sound sound) {
     adventure.stopSound(sound);
   }
 
   @Override
-  public void playSound(@NotNull Sound sound, Sound.@NotNull Emitter emitter) {
+  public void playSound(@Nonnull Sound sound, @Nonnull Sound.Emitter emitter) {
     adventure.playSound(sound, emitter);
   }
 
   @Override
-  public void stopSound(@NotNull SoundStop stop) {
+  public void stopSound(@Nonnull SoundStop stop) {
     adventure.stopSound(stop);
   }
 
   @Override
-  public void sendActionBar(@NotNull Component message) {
+  public void sendActionBar(@Nonnull Component message) {
     adventure.sendActionBar(message);
   }
 
   @Override
-  public void sendPlayerListHeaderAndFooter(@NotNull Component header, @NotNull Component footer) {
+  public void sendPlayerListHeaderAndFooter(@Nonnull Component header, @Nonnull Component footer) {
     adventure.sendPlayerListHeaderAndFooter(header, footer);
   }
 
   @Override
-  public void showTitle(@NotNull Title title) {
+  public void showTitle(@Nonnull Title title) {
     adventure.showTitle(title);
   }
 
@@ -123,7 +122,7 @@ public class SpigotPlayer implements ImplPlayer {
   }
 
   @Override
-  public void openBook(@NotNull Book book) {
+  public void openBook(@Nonnull Book book) {
     adventure.openBook(book);
   }
 

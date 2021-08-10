@@ -3,6 +3,8 @@ package org.apsarasmc.spigot.util;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.text.serializer.craftbukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.apsarasmc.apsaras.Apsaras;
@@ -19,6 +21,8 @@ public class TextComponentUtil {
     ? BungeeComponentSerializer.legacy()
     : BungeeComponentSerializer.get();
 
+  private static final LegacyComponentSerializer plain = BukkitComponentSerializer.legacy();
+
   static {
     messageToBukkit.put(MessageType.CHAT, ChatMessageType.CHAT);
     messageToBukkit.put(MessageType.SYSTEM, ChatMessageType.SYSTEM);
@@ -34,6 +38,10 @@ public class TextComponentUtil {
 
   public static BaseComponent[] toBukkit(net.kyori.adventure.text.Component adventure) {
     return serializer.serialize(adventure);
+  }
+
+  public static String toText(net.kyori.adventure.text.Component adventure) {
+    return plain.serialize(adventure);
   }
 
   public static Component toAdventure(BaseComponent... bungee) {

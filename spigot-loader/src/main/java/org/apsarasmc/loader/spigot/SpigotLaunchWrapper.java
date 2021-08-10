@@ -7,20 +7,32 @@ import java.net.URL;
 import java.util.logging.Level;
 
 public class SpigotLaunchWrapper extends JavaPlugin {
+  public static final String CORE_CLASS_NAME = "org.apsarasmc.spigot.SpigotCore";
+  private SpigotLoader spigotLoader;
+  private Class<?> coreClass;
+  private Object spigotCore;
   @Override
   public void onEnable() {
     try {
       String s = SpigotLaunchWrapper.class.getProtectionDomain().getCodeSource().getLocation().toString();
       // No, no! I don't want to close UrlClassPath
-      SpigotLoader spigotLoader = new SpigotLoader(
+      spigotLoader = new SpigotLoader(
         new URL("jar:" + s + "!/"),
         SpigotLaunchWrapper.class.getClassLoader());
-      Class< ? > clazz = spigotLoader.loadClass("org.apsarasmc.spigot.SpigotCore");
-      clazz.getMethod("init").invoke(
-        clazz.getConstructor(JavaPlugin.class).newInstance(this)
-      );
+      coreClass = spigotLoader.loadClass(CORE_CLASS_NAME);
+      spigotCore = coreClass.getConstructor(JavaPlugin.class).newInstance(this);
+      coreClass.getMethod("enable").invoke(spigotCore);
     } catch (Exception e) {
       Bukkit.getLogger().log(Level.WARNING, "Failed to load Apsaras.", e);
+    }
+  }
+
+  @Override
+  public void onDisable() {
+    try {
+      coreClass.getMethod("disable").invoke(spigotCore);
+    } catch (Exception e) {
+      Bukkit.getLogger().log(Level.WARNING, "Failed to unload Apsaras.", e);
     }
   }
 }

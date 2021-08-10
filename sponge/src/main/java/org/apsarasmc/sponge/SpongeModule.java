@@ -2,7 +2,9 @@ package org.apsarasmc.sponge;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.apsarasmc.apsaras.command.CommandManager;
 import org.apsarasmc.apsaras.entity.Player;
+import org.apsarasmc.sponge.command.SpongeCommandManager;
 import org.apsarasmc.sponge.entity.SpongePlayer;
 import org.apsarasmc.sponge.util.EventUtil;
 
@@ -18,5 +20,6 @@ public class SpongeModule implements Module {
     applyModule.configure(binder);
     binder.bind(Player.Factory.class).to(SpongePlayer.Factory.class);
     binder.requestStaticInjection(EventUtil.class);
+    binder.bind(CommandManager.class).to(SpongeCommandManager.class);
   }
 }
