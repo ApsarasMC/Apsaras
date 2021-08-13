@@ -1,7 +1,6 @@
 package org.apsarasmc.plugin.test;
 
 import org.apsarasmc.apsaras.Apsaras;
-import org.apsarasmc.apsaras.command.CommandManager;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
@@ -65,11 +64,6 @@ public class TestCore implements ImplServer {
   @Override
   public ClassLoader classLoader() {
     return TestCore.class.getClassLoader();
-  }
-
-  @Override
-  public CommandManager commandManager() {
-    return null;
   }
 
   @Override

@@ -7,9 +7,6 @@ import org.apsarasmc.apsaras.util.ResourceKeyed;
 
 import javax.annotation.Nonnull;
 
-public interface Entity extends Named, ResourceKeyed, Identified, Identity {
-  @Nonnull
-  default Identity identity() {
-    return this;
-  }
+public interface Entity extends Named, ResourceKeyed, Identified {
+
 }

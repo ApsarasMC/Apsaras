@@ -1,6 +1,7 @@
 package org.apsarasmc.apsaras.command;
 
 import net.kyori.adventure.text.Component;
+import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.builder.AbstractBuilder;
 
 import javax.annotation.Nonnull;
@@ -8,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Command {
-  String getName();
-
   boolean canExecute(CommandSender sender);
 
   default Optional< Component > shortDescription(CommandSender sender) {
@@ -37,6 +36,10 @@ public interface Command {
     return Optional.empty();
   }
 
+  static Command.Builder builder(){
+    return Apsaras.injector().getInstance(Command.Builder.class);
+  }
+
   interface Raw extends Command {
     CommandResult process(CommandSender sender, String argument);
 
@@ -44,10 +47,13 @@ public interface Command {
   }
 
   interface Adventure extends Command {
-    CommandResult process(CommandContext context);
+    CommandResult execute(CommandContext context);
+    List<CommandArgument> arguments();
   }
 
   interface Builder extends AbstractBuilder<Command.Adventure> {
-    Builder append();
+    Builder append(CommandArgument<?> argument);
+    Builder checker(Checkable checker);
+    Builder executor(Executable executor);
   }
 }

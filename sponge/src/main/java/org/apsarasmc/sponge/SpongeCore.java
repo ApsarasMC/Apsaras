@@ -5,22 +5,31 @@ import com.google.common.collect.ImmutableList;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.apsarasmc.apsaras.Apsaras;
-import org.apsarasmc.apsaras.command.CommandManager;
+import org.apsarasmc.apsaras.command.Arguments;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.apsarasmc.plugin.util.relocate.Relocation;
 import org.apsarasmc.sponge.event.Transfers;
-import org.apsarasmc.sponge.event.lifecycle.SpongeLoadPluginEvent;
 import org.apsarasmc.sponge.scheduler.SyncScheduler;
 import org.apsarasmc.sponge.scheduler.UtsScheduler;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.CommandCause;
+import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.exception.ArgumentParseException;
+import org.spongepowered.api.command.parameter.ArgumentReader;
+import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.managed.ValueCompleter;
+import org.spongepowered.api.command.parameter.managed.ValueParameterModifier;
+import org.spongepowered.api.command.parameter.managed.ValueParser;
+import org.spongepowered.api.command.parameter.managed.ValueUsage;
 import org.spongepowered.api.event.EventListenerRegistration;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -29,10 +38,11 @@ import org.spongepowered.api.event.lifecycle.StoppedGameEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Predicate;
 
 @Singleton
 public class SpongeCore implements ImplServer {
@@ -94,15 +104,18 @@ public class SpongeCore implements ImplServer {
     Sponge.eventManager().registerListeners(this.wrapper, this);
   }
 
+  public static Parameter.Value< Integer > ipParameter;
   @Listener
   public void onCommandRegister(final RegisterCommandEvent<Command.Parameterized> event){
+    ipParameter = Parameter.integerNumber().key("aaa").build();
     event.register(
       this.wrapper,
       Command
         .builder()
-        .addParameter(Parameter.integerNumber().key("aaa").build())
+        .addParameter(Parameter.bool().key("cyc").build())
         .executor((context -> {
           context.sendMessage(Identity.nil(), Component.text("wwwwwwwwww"));
+          logger().info("{}",context.requireOne(ipParameter));
           return CommandResult.success();
         }))
         .build(),
@@ -131,11 +144,6 @@ public class SpongeCore implements ImplServer {
   @Override
   public ClassLoader classLoader() {
     return SpongeCore.class.getClassLoader();
-  }
-
-  @Override
-  public CommandManager commandManager() {
-    return null;
   }
 
   @Override

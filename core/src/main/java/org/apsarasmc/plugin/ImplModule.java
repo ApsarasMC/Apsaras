@@ -4,7 +4,12 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import org.apsarasmc.apsaras.Game;
 import org.apsarasmc.apsaras.Server;
+import org.apsarasmc.apsaras.command.Checkable;
+import org.apsarasmc.apsaras.command.Command;
+import org.apsarasmc.apsaras.command.CommandContext;
 import org.apsarasmc.apsaras.command.CommandResult;
+import org.apsarasmc.apsaras.command.arguments.BooleanArgument;
+import org.apsarasmc.apsaras.command.arguments.StringArgument;
 import org.apsarasmc.apsaras.config.ConfigService;
 import org.apsarasmc.apsaras.event.EventContextKey;
 import org.apsarasmc.apsaras.event.EventManager;
@@ -14,7 +19,12 @@ import org.apsarasmc.apsaras.plugin.PluginMeta;
 import org.apsarasmc.apsaras.plugin.PluginUrls;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.apsaras.util.ResourceKey;
+import org.apsarasmc.plugin.command.ImplCommand;
+import org.apsarasmc.plugin.command.ImplCommandContext;
 import org.apsarasmc.plugin.command.ImplCommandResult;
+import org.apsarasmc.plugin.command.MultiCheckable;
+import org.apsarasmc.plugin.command.arguments.ImplBooleanArgument;
+import org.apsarasmc.plugin.command.arguments.ImplStringArgument;
 import org.apsarasmc.plugin.config.ImplConfigService;
 import org.apsarasmc.plugin.event.ImplEventContextKey;
 import org.apsarasmc.plugin.event.ImplEventManager;
@@ -39,7 +49,12 @@ public class ImplModule implements Module {
     applyModule.configure(binder);
     binder.bind(Game.class).to(ImplGame.class);
     // command
+    binder.bind(BooleanArgument.Builder.class).to(ImplBooleanArgument.Builder.class);
+    binder.bind(StringArgument.Builder.class).to(ImplStringArgument.Builder.class);
+    binder.bind(Command.Builder.class).to(ImplCommand.Builder.class);
+    binder.bind(CommandContext.Builder.class).to(ImplCommandContext.Builder.class);
     binder.bind(CommandResult.Builder.class).to(ImplCommandResult.Builder.class);
+    binder.bind(Checkable.Builder.class).to(MultiCheckable.Builder.class);
     // server
     binder.bind(Server.class).to(ImplServer.class);
     // plugin

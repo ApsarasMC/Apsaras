@@ -12,6 +12,7 @@ import org.apsarasmc.apsaras.entity.Player;
 import org.apsarasmc.apsaras.util.ResourceKey;
 import org.apsarasmc.plugin.entity.ImplPlayer;
 import org.apsarasmc.sponge.util.ResourceKeyUtil;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.registry.RegistryTypes;
@@ -26,12 +27,6 @@ public class SpongePlayer implements ImplPlayer {
 
   public SpongePlayer(ServerPlayer player) {
     this.handle = player;
-  }
-
-  @Override
-  @Nonnull
-  public UUID uuid() {
-    return handle.uniqueId();
   }
 
   @Override
@@ -119,6 +114,16 @@ public class SpongePlayer implements ImplPlayer {
   @Nonnull
   public ResourceKey key() {
     return ResourceKeyUtil.to(handle.type().key(RegistryTypes.ENTITY_TYPE));
+  }
+
+  @Override
+  public @NotNull Identity identity() {
+    return handle.identity();
+  }
+
+  @Override
+  public boolean hasPermission(String name) {
+    return handle.hasPermission(name);
   }
 
   @Singleton
