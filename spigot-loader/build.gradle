@@ -47,6 +47,7 @@ shadowJar {
   relocate('org.aopalliance', 'org.apsarasmc.libs.aopalliance')
   relocate('com.google.inject', 'org.apsarasmc.libs.guice')
   relocate('org.yaml.snakeyaml', 'org.apsarasmc.libs.snakeyaml')
+  relocate('org.objectweb.asm', 'org.apsarasmc.libs.asm')
 
   exclude 'about.html'
   exclude 'plugin.xml'

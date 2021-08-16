@@ -3,7 +3,6 @@ package org.apsarasmc.spigot;
 import com.google.common.collect.ImmutableList;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.apsarasmc.apsaras.Apsaras;
-import org.apsarasmc.apsaras.command.CommandManager;
 import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
@@ -14,10 +13,7 @@ import org.apsarasmc.spigot.event.Transfers;
 import org.apsarasmc.spigot.event.lifecycle.SpigotLoadPluginEvent;
 import org.apsarasmc.spigot.scheduler.SyncScheduler;
 import org.apsarasmc.spigot.scheduler.UtsScheduler;
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +39,7 @@ public class SpigotCore implements ImplServer, Listener {
       .add(new Relocation("org{}aopalliance", "org{}apsarasmc{}libs{}aopalliance"))
       .add(new Relocation("com{}google{}inject", "org{}apsarasmc{}libs{}guice"))
       .add(new Relocation("org{}yaml{}snakeyaml", "org{}apsarasmc{}libs{}snakeyaml"))
-
-      .add(new Relocation("org{}apsarasmc{}testplugin{}aaa", "org{}apsarasmc{}testplugin{}bbb"))
+      .add(new Relocation("org{}objectweb{}asm", "org{}apsarasmc{}libs{}asm"))
       .build()
   );
   private JavaPlugin wrapper;
@@ -56,8 +51,6 @@ public class SpigotCore implements ImplServer, Listener {
   private UtsScheduler utsScheduler;
   @Inject
   private Transfers transfers;
-  @Inject
-  private CommandManager commandManager;
   @Inject
   private EventManager eventManager;
 
@@ -114,11 +107,6 @@ public class SpigotCore implements ImplServer, Listener {
   @Override
   public ClassLoader classLoader() {
     return SpigotCore.class.getClassLoader();
-  }
-
-  @Override
-  public CommandManager commandManager() {
-    return this.commandManager;
   }
 
   @Override

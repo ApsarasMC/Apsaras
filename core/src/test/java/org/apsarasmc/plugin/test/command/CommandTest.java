@@ -2,12 +2,10 @@ package org.apsarasmc.plugin.test.command;
 
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.command.*;
-import org.apsarasmc.apsaras.command.arguments.BooleanArgument;
 import org.apsarasmc.apsaras.command.exception.ArgumentParseException;
 import org.apsarasmc.apsaras.entity.Player;
 import org.apsarasmc.plugin.command.ImplCommandContext;
 import org.apsarasmc.plugin.command.ImplCommandReader;
-import org.apsarasmc.plugin.command.arguments.ImplTwoBooleanArgument;
 import org.apsarasmc.plugin.test.InjectTest;
 import org.junit.jupiter.api.Test;
 
@@ -25,8 +23,11 @@ public class CommandTest {
     test("true true ");
   }
   void test(String test) {
-    CommandArgument<String> argument = new ImplTwoBooleanArgument.Builder().name("aa").build();
-    CommandArgument<String> sss = Arguments.STRING("aaa").build();
+    if(true){
+      return; // NOP
+    }
+    CommandArgument<String> argument = Arguments.STRING("aaa").build();
+    CommandArgument<String> sss = Arguments.STRING("bbb").build();
     Command.Adventure command = Command.builder()
       .append(argument)
       .append(sss)

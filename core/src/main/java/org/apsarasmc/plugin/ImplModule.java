@@ -49,12 +49,12 @@ public class ImplModule implements Module {
     applyModule.configure(binder);
     binder.bind(Game.class).to(ImplGame.class);
     // command
-    binder.bind(BooleanArgument.Builder.class).to(ImplBooleanArgument.Builder.class);
-    binder.bind(StringArgument.Builder.class).to(ImplStringArgument.Builder.class);
-    binder.bind(Command.Builder.class).to(ImplCommand.Builder.class);
-    binder.bind(CommandContext.Builder.class).to(ImplCommandContext.Builder.class);
-    binder.bind(CommandResult.Builder.class).to(ImplCommandResult.Builder.class);
-    binder.bind(Checkable.Builder.class).to(MultiCheckable.Builder.class);
+    // binder.bind(BooleanArgument.Builder.class).to(ImplBooleanArgument.Builder.class);
+    // binder.bind(StringArgument.Builder.class).to(ImplStringArgument.Builder.class);
+    // binder.bind(Command.Builder.class).to(ImplCommand.Builder.class);
+    // binder.bind(CommandContext.Builder.class).to(ImplCommandContext.Builder.class);
+    // binder.bind(CommandResult.Builder.class).to(ImplCommandResult.Builder.class);
+    // binder.bind(Checkable.Builder.class).to(MultiCheckable.Builder.class);
     // server
     binder.bind(Server.class).to(ImplServer.class);
     // plugin

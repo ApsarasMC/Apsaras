@@ -56,8 +56,7 @@ public class SpongeCore implements ImplServer {
       .add(new Relocation("org{}apache{}http", "org{}apsarasmc{}libs{}apache{}http"))
       .add(new Relocation("org{}apache{}commons", "org{}apsarasmc{}libs{}apache{}commons"))
       .add(new Relocation("org{}yaml{}snakeyaml", "org{}apsarasmc{}libs{}snakeyaml"))
-
-      .add(new Relocation("org{}apsarasmc{}testplugin{}aaa", "org{}apsarasmc{}testplugin{}bbb"))
+      .add(new Relocation("org{}objectweb{}asm", "org{}apsarasmc{}libs{}asm"))
       .build()
   );
   private final org.spongepowered.plugin.PluginContainer wrapper;

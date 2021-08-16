@@ -64,6 +64,7 @@ shadowJar {
   relocate('org.apache.http', 'org.apsarasmc.libs.apache.http')
   relocate('org.apache.commons', 'org.apsarasmc.libs.apache.commons')
   relocate('org.yaml.snakeyaml', 'org.apsarasmc.libs.snakeyaml')
+  relocate('org.objectweb.asm', 'org.apsarasmc.libs.asm')
 
   exclude 'about.html'
   exclude 'plugin.xml'

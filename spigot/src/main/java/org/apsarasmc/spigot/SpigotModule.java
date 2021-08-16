@@ -2,9 +2,7 @@ package org.apsarasmc.spigot;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.apsarasmc.apsaras.command.CommandManager;
 import org.apsarasmc.apsaras.entity.Player;
-import org.apsarasmc.spigot.command.SpigotCommandManager;
 import org.apsarasmc.spigot.entity.SpigotPlayer;
 import org.apsarasmc.spigot.util.EventUtil;
 
@@ -20,8 +18,7 @@ public class SpigotModule implements Module {
     applyModule.configure(binder);
     // entity
     binder.bind(Player.Factory.class).to(SpigotPlayer.Factory.class);
-    // command
-    binder.bind(CommandManager.class).to(SpigotCommandManager.class);
+
     binder.requestStaticInjection(EventUtil.class);
   }
 }

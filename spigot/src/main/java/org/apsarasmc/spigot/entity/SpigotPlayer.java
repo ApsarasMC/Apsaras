@@ -16,6 +16,7 @@ import org.apsarasmc.apsaras.util.ResourceKey;
 import org.apsarasmc.plugin.entity.ImplPlayer;
 import org.apsarasmc.spigot.util.KeyUtil;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,11 +34,6 @@ public class SpigotPlayer implements ImplPlayer {
   public SpigotPlayer(final @Nonnull org.bukkit.entity.Player handle) {
     this.handle = handle;
     adventure = Apsaras.injector().getInstance(BukkitAudiences.class).player(this.handle);
-  }
-
-  @Override
-  public UUID uuid() {
-    return handle.getUniqueId();
   }
 
   @Nonnull
@@ -124,6 +120,16 @@ public class SpigotPlayer implements ImplPlayer {
   @Override
   public void openBook(@Nonnull Book book) {
     adventure.openBook(book);
+  }
+
+  @Override
+  public @NotNull Identity identity() {
+    return Identity.identity(handle.getUniqueId());
+  }
+
+  @Override
+  public boolean hasPermission(String name) {
+    return handle.hasPermission(name);
   }
 
   @Singleton

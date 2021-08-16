@@ -44,7 +44,7 @@ public class MessageTransfer implements EventTransfer {
       e.cancel();
       for (Player recipient : e.handle.getRecipients()) {
         BaseComponent[] messageComponents = TextComponentUtil.toBukkit(optional.get().format(e, new SpigotPlayer(recipient)));
-        recipient.spigot().sendMessage(ChatMessageType.CHAT, e.sender().uuid(), messageComponents);
+        recipient.spigot().sendMessage(ChatMessageType.CHAT, e.sender().identity().uuid(), messageComponents);
       }
     }
   }
