@@ -1,5 +1,7 @@
 package org.apsarasmc.spigot.event.message;
 
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.apsarasmc.apsaras.event.EventHandler;
@@ -43,8 +45,11 @@ public class MessageTransfer implements EventTransfer {
     if (optional.isPresent()) {
       e.cancel();
       for (Player recipient : e.handle.getRecipients()) {
-        BaseComponent[] messageComponents = TextComponentUtil.toBukkit(optional.get().format(e, new SpigotPlayer(recipient)));
-        recipient.spigot().sendMessage(ChatMessageType.CHAT, e.sender().identity().uuid(), messageComponents);
+        SpigotPlayer receiver = new SpigotPlayer(recipient);
+        Component component = optional.get().format(e, receiver);
+        if(component != null){
+          receiver.sendMessage(e.sender().identity(), component, MessageType.CHAT);
+        }
       }
     }
   }

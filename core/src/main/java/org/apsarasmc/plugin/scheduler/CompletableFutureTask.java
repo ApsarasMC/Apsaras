@@ -2,10 +2,13 @@ package org.apsarasmc.plugin.scheduler;
 
 import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.apsarasmc.apsaras.scheduler.Task;
+import org.apsarasmc.plugin.util.RunnableUtil;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CompletableFutureTask< T > implements Task< T > {
@@ -34,6 +37,21 @@ public class CompletableFutureTask< T > implements Task< T > {
   @Override
   public < R > Task< R > then(Function< T, R > command) {
     return new CompletableFutureTask<>(this.plugin, completableFuture.thenApply(command));
+  }
+
+  @Override
+  public Task< Void > then(Consumer< T > command) {
+    return new CompletableFutureTask<>(this.plugin, completableFuture.thenAccept(command));
+  }
+
+  public Task< Void > then(Runnable command) {
+    return new CompletableFutureTask<>(this.plugin, completableFuture.thenRun(command));
+  }
+
+  public <R> Task< R > then(Callable<R> command) {
+    CompletableFuture<R> future = new CompletableFuture<>();
+    completableFuture.thenRun(RunnableUtil.runnable(command,future));
+    return new CompletableFutureTask<>(this.plugin, future);
   }
 
   @Override

@@ -12,8 +12,9 @@ public class SpigotLoader extends URLClassLoader {
   static {
     Collection< String > parentPrefixes = new ArrayList<>();
     parentPrefixes.add("javax");
-    parentPrefixes.add("net.kyori.examination");
     parentPrefixes.add("net.kyori.adventure");
+    parentPrefixes.add("net.kyori.examination");
+    parentPrefixes.add("org.slf4j");
     parentPrefixCollection = Collections.unmodifiableCollection(parentPrefixes);
   }
 

@@ -29,6 +29,10 @@ public class SpongePlayer implements ImplPlayer {
     this.handle = player;
   }
 
+  public ServerPlayer handle() {
+    return handle;
+  }
+
   @Override
   public boolean isOnline() {
     return handle.isOnline();

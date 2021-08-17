@@ -37,6 +37,11 @@ public class SpigotPlayer implements ImplPlayer {
   }
 
   @Nonnull
+  public org.bukkit.entity.Player handle() {
+    return handle;
+  }
+
+  @Nonnull
   @Override
   public String name() {
     return handle.getName();

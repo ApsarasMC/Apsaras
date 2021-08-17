@@ -7,8 +7,10 @@ import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.scheduler.SchedulerService;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
+import org.apsarasmc.plugin.event.lifecycle.ImplServerLifeEvent;
 import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.apsarasmc.plugin.util.relocate.Relocation;
+import org.apsarasmc.spigot.event.LifeCycleTransfer;
 import org.apsarasmc.spigot.event.Transfers;
 import org.apsarasmc.spigot.event.lifecycle.SpigotLoadPluginEvent;
 import org.apsarasmc.spigot.scheduler.SyncScheduler;
@@ -20,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -83,6 +84,9 @@ public class SpigotCore implements ImplServer, Listener {
 
     game.enable();
     eventManager.post(new SpigotLoadPluginEvent.RegisterCommand());
+    if(LifeCycleTransfer.postEnable){
+      eventManager.post(new ImplServerLifeEvent.Enable());
+    }
   }
 
   public void disable() {
