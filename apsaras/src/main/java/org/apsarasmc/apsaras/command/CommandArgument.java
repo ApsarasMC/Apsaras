@@ -8,8 +8,9 @@ import org.apsarasmc.apsaras.util.Named;
 import java.util.List;
 
 public interface CommandArgument<T> extends Named {
+  Class<T> type();
   void read(CommandContext context ,CommandReader reader) throws ArgumentParseException;
-  List<String> tabComplete(CommandSender sender, CommandReader reader);
+  List<String> tabComplete(CommandReader reader);
   boolean optional();
   List<CommandArgument> requires();
   interface Builder<T> extends AbstractBuilder<CommandArgument<T>>, NamedBuilder<CommandArgument<T>, Builder<T> > {

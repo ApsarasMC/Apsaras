@@ -23,9 +23,6 @@ public class CommandTest {
     test("true true ");
   }
   void test(String test) {
-    if(true){
-      return; // NOP
-    }
     CommandArgument<String> argument = Arguments.STRING("aaa").build();
     CommandArgument<String> sss = Arguments.STRING("bbb").build();
     Command.Adventure command = Command.builder()
@@ -74,7 +71,7 @@ public class CommandTest {
           return complete;
         }
       }
-      pComplete = argument.tabComplete(player, reader);
+      pComplete = argument.tabComplete(reader);
       if (pComplete != null) {
         complete = pComplete;
         if(returnFirst){

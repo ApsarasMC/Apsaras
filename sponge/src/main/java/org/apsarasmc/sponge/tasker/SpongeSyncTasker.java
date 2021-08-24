@@ -1,9 +1,8 @@
-package org.apsarasmc.sponge.scheduler;
+package org.apsarasmc.sponge.tasker;
 
 import org.apsarasmc.apsaras.plugin.PluginContainer;
-import org.apsarasmc.apsaras.scheduler.SchedulerService;
-import org.apsarasmc.apsaras.scheduler.Task;
-import org.apsarasmc.plugin.scheduler.CompletableFutureTask;
+import org.apsarasmc.apsaras.tasker.Task;
+import org.apsarasmc.plugin.tasker.CompletableFutureTask;
 import org.apsarasmc.plugin.util.RunnableUtil;
 import org.apsarasmc.sponge.SpongeCore;
 import org.spongepowered.api.Sponge;
@@ -15,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class SyncScheduler implements SchedulerService {
+public class SpongeSyncTasker implements org.apsarasmc.apsaras.tasker.SyncTasker {
   @Inject
   private SpongeCore core;
 

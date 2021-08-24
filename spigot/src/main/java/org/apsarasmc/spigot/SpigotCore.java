@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableList;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.event.EventManager;
-import org.apsarasmc.apsaras.scheduler.SchedulerService;
+import org.apsarasmc.apsaras.scheduler.SyncScheduler;
+import org.apsarasmc.apsaras.scheduler.UtsScheduler;
+import org.apsarasmc.apsaras.tasker.SyncTasker;
+import org.apsarasmc.apsaras.tasker.UtsTasker;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.event.lifecycle.ImplServerLifeEvent;
@@ -13,8 +16,9 @@ import org.apsarasmc.plugin.util.relocate.Relocation;
 import org.apsarasmc.spigot.event.LifeCycleTransfer;
 import org.apsarasmc.spigot.event.Transfers;
 import org.apsarasmc.spigot.event.lifecycle.SpigotLoadPluginEvent;
-import org.apsarasmc.spigot.scheduler.SyncScheduler;
-import org.apsarasmc.spigot.scheduler.UtsScheduler;
+import org.apsarasmc.spigot.tasker.SpigotSyncTasker;
+import org.apsarasmc.spigot.tasker.SpigotUtsTasker;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
@@ -41,11 +45,19 @@ public class SpigotCore implements ImplServer, Listener {
       .add(new Relocation("com{}google{}inject", "org{}apsarasmc{}libs{}guice"))
       .add(new Relocation("org{}yaml{}snakeyaml", "org{}apsarasmc{}libs{}snakeyaml"))
       .add(new Relocation("org{}objectweb{}asm", "org{}apsarasmc{}libs{}asm"))
+      .add(new Relocation("com{}zaxxer{}hikari", "org{}apsarasmc{}libs{}hikari"))
+      .add(new Relocation("com{}mchange", "org{}apsarasmc{}libs{}mchange"))
+      .add(new Relocation("org{}quartz", "org{}apsarasmc{}libs{}quartz"))
+      .add(new Relocation("org{}terracotta", "org{}apsarasmc{}libs{}terracotta"))
       .build()
   );
   private JavaPlugin wrapper;
   @Inject
   private ImplGame game;
+  @Inject
+  private SyncTasker syncTasker;
+  @Inject
+  private UtsTasker utsTasker;
   @Inject
   private SyncScheduler syncScheduler;
   @Inject
@@ -85,7 +97,7 @@ public class SpigotCore implements ImplServer, Listener {
     game.enable();
     eventManager.post(new SpigotLoadPluginEvent.RegisterCommand());
     if(LifeCycleTransfer.postEnable){
-      eventManager.post(new ImplServerLifeEvent.Enable());
+      syncTasker.run(Apsaras.game().self(), ()->eventManager.post(new ImplServerLifeEvent.Enable()));
     }
   }
 
@@ -94,13 +106,23 @@ public class SpigotCore implements ImplServer, Listener {
   }
 
   @Override
-  public SchedulerService sync() {
-    return this.syncScheduler;
+  public SyncTasker syncTasker() {
+    return this.syncTasker;
   }
 
   @Override
-  public SchedulerService uts() {
-    return this.utsScheduler;
+  public UtsTasker utsTasker() {
+    return this.utsTasker;
+  }
+
+  @Override
+  public SyncScheduler syncScheduler() {
+    return null;
+  }
+
+  @Override
+  public UtsScheduler utsScheduler() {
+    return null;
   }
 
   @Override
@@ -126,6 +148,11 @@ public class SpigotCore implements ImplServer, Listener {
   @Override
   public String version() {
     return wrapper.getDescription().getVersion();
+  }
+
+  @Override
+  public void dispatchCommand(String command) {
+    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
   }
 
   @Override

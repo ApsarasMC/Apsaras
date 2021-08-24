@@ -1,20 +1,21 @@
 package org.apsarasmc.apsaras.scheduler;
 
+import org.apsarasmc.apsaras.Apsaras;
+import org.apsarasmc.apsaras.builder.AbstractBuilder;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
-
-import javax.annotation.Nonnull;
-import java.util.Collection;
+import org.apsarasmc.apsaras.tasker.Tasker;
 
 public interface Scheduler {
-  SchedulerService sync();
+  JobToken commit(ScheduledJob job);
+  void cancel(JobToken token);
 
-  SchedulerService uts();
-
-  static Collection< SchedulerService > all(PluginContainer pluginContainer) {
-    return SchedulerService.factory().all(pluginContainer);
+  static Builder builder(){
+    return Apsaras.injector().getInstance(Builder.class);
   }
 
-  static SchedulerService startup(final @Nonnull PluginContainer plugin, final int threads, final @Nonnull String name) {
-    return SchedulerService.factory().of(plugin, threads, name);
+  interface Builder extends AbstractBuilder< Scheduler > {
+    Builder plugin(PluginContainer plugin);
+    Builder taskerService(Tasker tasker);
+    Builder name(String name);
   }
 }

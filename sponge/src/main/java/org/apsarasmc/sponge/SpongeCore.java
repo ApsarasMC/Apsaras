@@ -5,44 +5,37 @@ import com.google.common.collect.ImmutableList;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.apsarasmc.apsaras.Apsaras;
-import org.apsarasmc.apsaras.command.Arguments;
-import org.apsarasmc.apsaras.scheduler.SchedulerService;
+import org.apsarasmc.apsaras.scheduler.SyncScheduler;
+import org.apsarasmc.apsaras.scheduler.UtsScheduler;
+import org.apsarasmc.apsaras.tasker.SyncTasker;
+import org.apsarasmc.apsaras.tasker.UtsTasker;
 import org.apsarasmc.plugin.ImplGame;
 import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.util.relocate.RelocatingRemapper;
 import org.apsarasmc.plugin.util.relocate.Relocation;
 import org.apsarasmc.sponge.event.Transfers;
-import org.apsarasmc.sponge.scheduler.SyncScheduler;
-import org.apsarasmc.sponge.scheduler.UtsScheduler;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.apsarasmc.sponge.tasker.SpongeSyncTasker;
+import org.apsarasmc.sponge.tasker.SpongeUtsTasker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
-import org.spongepowered.api.command.CommandCause;
-import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.exception.ArgumentParseException;
-import org.spongepowered.api.command.parameter.ArgumentReader;
-import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.command.parameter.managed.ValueCompleter;
-import org.spongepowered.api.command.parameter.managed.ValueParameterModifier;
-import org.spongepowered.api.command.parameter.managed.ValueParser;
-import org.spongepowered.api.command.parameter.managed.ValueUsage;
 import org.spongepowered.api.event.EventListenerRegistration;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.event.lifecycle.StoppedGameEvent;
+import org.spongepowered.api.placeholder.PlaceholderContext;
+import org.spongepowered.api.placeholder.PlaceholderParser;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Predicate;
 
 @Singleton
 public class SpongeCore implements ImplServer {
@@ -57,13 +50,21 @@ public class SpongeCore implements ImplServer {
       .add(new Relocation("org{}apache{}commons", "org{}apsarasmc{}libs{}apache{}commons"))
       .add(new Relocation("org{}yaml{}snakeyaml", "org{}apsarasmc{}libs{}snakeyaml"))
       .add(new Relocation("org{}objectweb{}asm", "org{}apsarasmc{}libs{}asm"))
+      .add(new Relocation("com{}zaxxer{}hikari", "org{}apsarasmc{}libs{}hikari"))
+      .add(new Relocation("com{}mchange", "org{}apsarasmc{}libs{}mchange"))
+      .add(new Relocation("org{}quartz", "org{}apsarasmc{}libs{}quartz"))
+      .add(new Relocation("org{}terracotta", "org{}apsarasmc{}libs{}terracotta"))
       .build()
   );
   private final org.spongepowered.plugin.PluginContainer wrapper;
   @Inject
   private ImplGame game;
   @Inject
-  private SyncScheduler syncScheduler;
+  private SyncTasker syncTasker;
+  @Inject
+  private UtsTasker utsTasker;
+  @Inject
+  private SyncTasker syncScheduler;
   @Inject
   private UtsScheduler utsScheduler;
   @Inject
@@ -126,13 +127,23 @@ public class SpongeCore implements ImplServer {
   }
 
   @Override
-  public SchedulerService sync() {
-    return this.syncScheduler;
+  public SyncTasker syncTasker() {
+    return this.syncTasker;
   }
 
   @Override
-  public SchedulerService uts() {
-    return this.utsScheduler;
+  public UtsTasker utsTasker() {
+    return this.utsTasker;
+  }
+
+  @Override
+  public SyncScheduler syncScheduler() {
+    return null;
+  }
+
+  @Override
+  public UtsScheduler utsScheduler() {
+    return null;
   }
 
   @Override
@@ -158,6 +169,15 @@ public class SpongeCore implements ImplServer {
   @Override
   public String version() {
     return this.wrapper().metadata().version();
+  }
+
+  @Override
+  public void dispatchCommand(String command) {
+    try {
+      Sponge.server().commandManager().process(command);
+    } catch (CommandException e) {
+      logger().warn("Failed to dispatch command.", e);
+    }
   }
 
   @Override

@@ -1,7 +1,7 @@
-package org.apsarasmc.plugin.scheduler;
+package org.apsarasmc.plugin.tasker;
 
 import org.apsarasmc.apsaras.plugin.PluginContainer;
-import org.apsarasmc.apsaras.scheduler.Task;
+import org.apsarasmc.apsaras.tasker.Task;
 import org.apsarasmc.plugin.util.RunnableUtil;
 
 import javax.annotation.Nonnull;

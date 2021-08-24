@@ -9,6 +9,7 @@ public class ImplCommandReader implements CommandReader {
   public ImplCommandReader(final String context){
     this.context = context;
   }
+
   @Override
   public String read(int length) {
     String result = context.substring(offset, offset + length);
@@ -27,6 +28,23 @@ public class ImplCommandReader implements CommandReader {
     }else {
       result = context.substring(offset, pos);
       offset = pos+1;
+    }
+    return result;
+  }
+
+  @Override
+  public String get(int length) {
+    return context.substring(offset, offset + length);
+  }
+
+  @Override
+  public String getString() {
+    int pos = context.indexOf(' ', offset);
+    String result;
+    if(pos == -1){
+      result =  context.substring(offset);
+    }else {
+      result = context.substring(offset, pos);
     }
     return result;
   }

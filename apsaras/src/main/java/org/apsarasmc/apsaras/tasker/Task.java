@@ -1,4 +1,4 @@
-package org.apsarasmc.apsaras.scheduler;
+package org.apsarasmc.apsaras.tasker;
 
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;

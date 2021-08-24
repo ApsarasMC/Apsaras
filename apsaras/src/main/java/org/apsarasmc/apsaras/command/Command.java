@@ -6,6 +6,7 @@ import org.apsarasmc.apsaras.builder.AbstractBuilder;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface Command {
@@ -49,10 +50,12 @@ public interface Command {
   interface Adventure extends Command {
     CommandResult execute(CommandContext context);
     List<CommandArgument> arguments();
+    Map<String, Command.Adventure> subcommands();
   }
 
   interface Builder extends AbstractBuilder<Command.Adventure> {
     Builder append(CommandArgument<?> argument);
+    Builder subcommand(String name, Command.Adventure command);
     Builder checker(Checkable checker);
     Builder executor(Executable executor);
   }

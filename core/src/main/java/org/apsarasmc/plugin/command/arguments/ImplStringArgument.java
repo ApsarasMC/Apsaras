@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class ImplStringArgument extends ImplCommandArgument<String> implements StringArgument {
-  private final List<String> tabComplete = ImmutableList.of("aaaaaa", "bbbbbb");
   protected ImplStringArgument(String name, boolean optional) {
     super(name, optional);
   }
@@ -27,9 +26,9 @@ public class ImplStringArgument extends ImplCommandArgument<String> implements S
   }
 
   @Override
-  public List< String > tabComplete(CommandSender sender, CommandReader reader) {
+  public List< String > tabComplete(CommandReader reader) {
     reader.readString();
-    return tabComplete;
+    return Collections.emptyList();
   }
 
   public List<CommandArgument> requires() {

@@ -1,8 +1,8 @@
-package org.apsarasmc.plugin.scheduler;
+package org.apsarasmc.plugin.tasker;
 
 import org.apsarasmc.apsaras.plugin.PluginContainer;
-import org.apsarasmc.apsaras.scheduler.SchedulerService;
-import org.apsarasmc.apsaras.scheduler.Task;
+import org.apsarasmc.apsaras.tasker.Tasker;
+import org.apsarasmc.apsaras.tasker.Task;
 import org.apsarasmc.plugin.util.RunnableUtil;
 
 import javax.annotation.Nonnull;
@@ -17,11 +17,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ImplSchedulerService implements SchedulerService {
+public class ImplTasker implements Tasker {
   private final AtomicInteger id = new AtomicInteger(0);
   private final ScheduledThreadPoolExecutor executor;
 
-  private ImplSchedulerService(final @Nonnull PluginContainer plugin, final int threads, final @Nonnull String name) {
+  protected ImplTasker(final @Nonnull PluginContainer plugin, final int threads, final @Nonnull String name) {
     this.executor = new ScheduledThreadPoolExecutor(threads, r -> new Thread(r, plugin.name() + "-" + name + id.getAndIncrement()));
   }
 
@@ -34,33 +34,33 @@ public class ImplSchedulerService implements SchedulerService {
 
   @Override
   public void shutdown() {
-    SchedulerService.super.shutdown();
+    Tasker.super.shutdown();
   }
 
   @Singleton
-  public static class Factory implements SchedulerService.Factory {
-    private final Map< PluginContainer, Collection< SchedulerService > > services = new HashMap<>();
+  public static class Factory implements Tasker.Factory {
+    private final Map< PluginContainer, Collection< Tasker > > services = new HashMap<>();
 
     @Override
-    public SchedulerService of(PluginContainer plugin, int threads, String name) {
-      ImplSchedulerService service = new ImplSchedulerService(plugin, threads, name);
-      Collection< SchedulerService > collection = services.computeIfAbsent(plugin, k -> new ArrayList<>());
+    public Tasker of(PluginContainer plugin, int threads, String name) {
+      ImplTasker service = new ImplTasker(plugin, threads, name);
+      Collection< Tasker > collection = services.computeIfAbsent(plugin, k -> new ArrayList<>());
       collection.add(service);
       return service;
     }
 
     @Override
-    public Collection< SchedulerService > all(PluginContainer plugin) {
+    public Collection< Tasker > all(PluginContainer plugin) {
       return new ArrayList<>(services.get(plugin));
     }
 
     @Override
     public void unregister(PluginContainer plugin) {
-      Collection< SchedulerService > collection = services.get(plugin);
+      Collection< Tasker > collection = services.get(plugin);
       if (collection == null) {
         return;
       }
-      for (SchedulerService schedulerService : collection) {
+      for (Tasker schedulerService : collection) {
         schedulerService.shutdown();
       }
       services.remove(plugin);

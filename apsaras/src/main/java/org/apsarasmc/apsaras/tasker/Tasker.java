@@ -1,4 +1,4 @@
-package org.apsarasmc.apsaras.scheduler;
+package org.apsarasmc.apsaras.tasker;
 
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-public interface SchedulerService {
+public interface Tasker {
   static Factory factory() {
     return Apsaras.injector().getInstance(Factory.class);
   }
@@ -49,17 +49,21 @@ public interface SchedulerService {
 
 
   interface Factory {
-    SchedulerService of(PluginContainer plugin, int threads, String name);
+    Tasker of(PluginContainer plugin, int threads, String name);
 
-    default SchedulerService of(PluginContainer plugin, String name) {
-      return this.of(plugin, name);
+    default Tasker of(PluginContainer plugin, String name) {
+      return this.of(plugin, 1, name);
     }
 
-    default SchedulerService of(PluginContainer plugin) {
+    default Tasker of(PluginContainer plugin, int threads) {
+      return this.of(plugin, threads, plugin.name() + "-worker");
+    }
+
+    default Tasker of(PluginContainer plugin) {
       return this.of(plugin, plugin.name() + "-worker");
     }
 
-    Collection< SchedulerService > all(PluginContainer plugin);
+    Collection< Tasker > all(PluginContainer plugin);
 
     void unregister(PluginContainer plugin);
   }

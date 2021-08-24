@@ -1,9 +1,8 @@
-package org.apsarasmc.spigot.scheduler;
+package org.apsarasmc.spigot.tasker;
 
 import org.apsarasmc.apsaras.plugin.PluginContainer;
-import org.apsarasmc.apsaras.scheduler.SchedulerService;
-import org.apsarasmc.apsaras.scheduler.Task;
-import org.apsarasmc.plugin.scheduler.CompletableFutureTask;
+import org.apsarasmc.apsaras.tasker.Task;
+import org.apsarasmc.plugin.tasker.CompletableFutureTask;
 import org.apsarasmc.plugin.util.RunnableUtil;
 import org.apsarasmc.spigot.SpigotCore;
 import org.bukkit.Bukkit;
@@ -15,17 +14,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class UtsScheduler implements SchedulerService {
+public class SpigotSyncTasker implements org.apsarasmc.apsaras.tasker.SyncTasker {
   @Inject
   private SpigotCore core;
 
   @Override
   public < T > Task< T > runLater(PluginContainer plugin, Callable< T > command, int delay, TimeUnit timeUnit) {
     CompletableFuture< T > completableFuture = new CompletableFuture<>();
-    Bukkit.getScheduler().runTaskLaterAsynchronously(
-      core.wrapper(),
-      RunnableUtil.runnable(command, completableFuture),
-      timeUnit.toMillis(delay) / 50);
+    Bukkit.getScheduler().runTaskLater(core.wrapper(), RunnableUtil.runnable(command, completableFuture), timeUnit.toMillis(delay) / 50);
     return new CompletableFutureTask<>(plugin, completableFuture);
   }
 }

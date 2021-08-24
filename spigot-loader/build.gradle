@@ -49,6 +49,11 @@ shadowJar {
   relocate('org.yaml.snakeyaml', 'org.apsarasmc.libs.snakeyaml')
   relocate('org.objectweb.asm', 'org.apsarasmc.libs.asm')
 
+  relocate('com.zaxxer.hikari', 'org.apsarasmc.libs.hikari')
+  relocate('com.mchange', 'org.apsarasmc.libs.mchange')
+  relocate('org.quartz', 'org.apsarasmc.libs.quartz')
+  relocate('org.terracotta', 'org.apsarasmc.libs.terracotta')
+
   exclude 'about.html'
   exclude 'plugin.xml'
   exclude 'licenses/**'

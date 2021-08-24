@@ -1,4 +1,4 @@
-package org.apsarasmc.spigot.entity;
+package org.apsarasmc.spigot.command;
 
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;

@@ -149,7 +149,9 @@ public class JavaPluginContainer implements PluginContainer {
   public Path dataPath() {
     Path dataPath = server.pluginPath().resolve("storage").resolve(this.name());
     try {
-      Files.createDirectories(dataPath);
+      if(Files.notExists(dataPath)){
+        Files.createDirectories(dataPath);
+      }
     } catch (IOException e) {
       logger.warn("Failed to create data directory for " + this.name() + ".", e);
     }
@@ -160,7 +162,9 @@ public class JavaPluginContainer implements PluginContainer {
   public Path configPath() {
     Path dataPath = server.pluginPath().resolve("config").resolve(this.name());
     try {
-      Files.createDirectories(dataPath);
+      if(Files.notExists(dataPath)){
+        Files.createDirectories(dataPath);
+      }
     } catch (IOException e) {
       logger.warn("Failed to create config directory for " + this.name() + ".", e);
     }

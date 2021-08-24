@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ImplBooleanArgument extends ImplCommandArgument<Boolean> implements BooleanArgument {
-  private final List<String> tabComplete = ImmutableList.of("true", "false");
+  private final List<String> tabComplete = ImmutableList.of("false", "true");
   protected ImplBooleanArgument(String name, boolean optional) {
     super(name, optional);
   }
@@ -33,8 +33,14 @@ public class ImplBooleanArgument extends ImplCommandArgument<Boolean> implements
   }
 
   @Override
-  public List< String > tabComplete(CommandSender sender, CommandReader reader) {
-    reader.readString();
+  public List< String > tabComplete(CommandReader reader) {
+    String input = reader.readString();
+    if("true".startsWith(input) && !input.isEmpty()){
+      return Collections.singletonList("true");
+    }
+    if("false".startsWith(input) && !input.isEmpty()){
+      return Collections.singletonList("false");
+    }
     return tabComplete;
   }
 
