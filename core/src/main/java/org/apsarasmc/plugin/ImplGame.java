@@ -3,13 +3,12 @@ package org.apsarasmc.plugin;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.Game;
 import org.apsarasmc.apsaras.Server;
 import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.apsarasmc.apsaras.plugin.PluginManager;
-import org.apsarasmc.plugin.event.lifecycle.ImplPluginLifeEvent;
+import org.apsarasmc.plugin.aop.ImplInjector;
 import org.apsarasmc.plugin.event.lifecycle.ImplServerLifeEvent;
 import org.apsarasmc.plugin.setting.ApsarasSetting;
 import org.apsarasmc.plugin.util.StaticEntryUtil;
@@ -37,7 +36,7 @@ public class ImplGame implements Game {
     this.injector = Guice.createInjector(new ImplModule(binder ->
       binder.bind(ImplGame.class).toInstance(this)
     ), module);
-    StaticEntryUtil.applyInjector(ImplGame.class.getClassLoader(), this.injector);
+    StaticEntryUtil.applyInjector(ImplGame.class.getClassLoader(), new ImplInjector(this.injector));
     this.injector.injectMembers(this);
     this.pluginManager.addPlugin(self);
   }
@@ -72,8 +71,8 @@ public class ImplGame implements Game {
   }
 
   @Override
-  public Injector injector() {
-    return this.injector;
+  public org.apsarasmc.apsaras.aop.Injector injector() {
+    return new ImplInjector(this.injector);
   }
 
   @Override

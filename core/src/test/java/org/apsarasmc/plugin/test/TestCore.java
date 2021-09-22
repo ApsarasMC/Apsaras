@@ -90,6 +90,11 @@ public class TestCore implements ImplServer {
   }
 
   @Override
+  public ClassLoader apiClassLoader() {
+    return classLoader();
+  }
+
+  @Override
   public Path gamePath() {
     return new File("./run").toPath();
   }

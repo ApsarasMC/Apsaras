@@ -1,0 +1,95 @@
+package org.apsaras.loader.spongelegacy;
+
+import com.google.inject.Inject;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameConstructionEvent;
+import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
+
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+@Plugin (id = "apsaras")
+public class SpongeLegacyLaunchWrapper extends URLClassLoader {
+  private final PluginContainer pluginContainer;
+  private static final Collection< String > parentPrefixCollection;
+
+  static {
+    Collection< String > parentPrefixes = new ArrayList<>();
+    parentPrefixes.add("javax");
+    parentPrefixes.add("net.kyori.examination");
+    parentPrefixes.add("net.kyori.adventure");
+    parentPrefixes.add("org.apsarasmc.apsaras");
+    parentPrefixCollection = Collections.unmodifiableCollection(parentPrefixes);
+  }
+
+  @Inject
+  public SpongeLegacyLaunchWrapper(final PluginContainer pluginContainer) {
+    super(new URL[ 0 ], SpongeLegacyLaunchWrapper.class.getClassLoader());
+    this.pluginContainer = pluginContainer;
+  }
+
+  @Listener
+  public void onLoad(GameConstructionEvent event) {
+    try {
+      String s = SpongeLegacyLaunchWrapper.class.getProtectionDomain().getCodeSource().getLocation().toString();
+      addURL(new URL(s.substring(0, s.indexOf('!') + 2)));
+      Class< ? > clazz = loadClass("org.apsarasmc.sponge.legacy.SpongeCore");
+      clazz.getMethod("init").invoke(
+        clazz.getConstructor(PluginContainer.class, Object.class).newInstance(pluginContainer, this)
+      );
+
+      clazz = loadClass("org.apsarasmc.sponge.legacy.ApsarasSpongeLegacy");
+    } catch (Exception exception) {
+      exception.printStackTrace();
+    }
+  }
+
+  @Override
+  protected Class< ? > loadClass(String name, boolean resolve) throws ClassNotFoundException {
+    synchronized (getClassLoadingLock(name)) {
+      Class< ? > c = null;
+      for (String parentPrefix : parentPrefixCollection) {
+        if (name.startsWith(parentPrefix)) {
+          c = super.getParent().loadClass(name);
+        }
+      }
+      if (c == null) {
+        c = super.findLoadedClass(name);
+      }
+      if (c == null) {
+        try {
+          c = super.findClass(name);
+        } catch (ClassNotFoundException ignore) {
+          //
+        }
+      }
+      if (c == null) {
+        try {
+          c = super.getParent().loadClass(name);
+        } catch (ClassNotFoundException ignore) {
+          //
+        }
+      }
+      if (c == null) {
+        throw new ClassNotFoundException(name);
+      }
+      if (resolve) {
+        resolveClass(c);
+      }
+      return c;
+    }
+  }
+
+  @Override
+  public URL getResource(String name) {
+    URL u = super.findResource(name);
+    if (u != null) {
+      return u;
+    }
+    return super.getParent().getResource(name);
+  }
+}

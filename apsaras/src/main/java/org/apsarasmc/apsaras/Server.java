@@ -21,6 +21,8 @@ public interface Server {
 
   ClassLoader classLoader();
 
+  ClassLoader apiClassLoader();
+
   Path gamePath();
 
   Path pluginPath();

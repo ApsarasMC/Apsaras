@@ -16,8 +16,6 @@ import org.apsarasmc.plugin.util.relocate.Relocation;
 import org.apsarasmc.spigot.event.LifeCycleTransfer;
 import org.apsarasmc.spigot.event.Transfers;
 import org.apsarasmc.spigot.event.lifecycle.SpigotLoadPluginEvent;
-import org.apsarasmc.spigot.tasker.SpigotSyncTasker;
-import org.apsarasmc.spigot.tasker.SpigotUtsTasker;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -92,6 +90,17 @@ public class SpigotCore implements ImplServer, Listener {
     } catch (Exception e) {
       this.logger().warn("Failed to open plugins dir.", e);
     }
+
+    try {
+      Path pluginsPath = this.gamePath().resolve("plugins");
+      Files.createDirectories(pluginsPath);
+      Arrays.stream(
+        Objects.requireNonNull(pluginsPath.toFile().listFiles())
+      ).filter(file -> file.getName().endsWith(".jar")).forEach(file -> Apsaras.pluginManager().addPlugin(file));
+    } catch (Exception e) {
+      this.logger().warn("Failed to open plugins dir.", e);
+    }
+
     this.transfers.register();
 
     game.enable();
@@ -117,12 +126,12 @@ public class SpigotCore implements ImplServer, Listener {
 
   @Override
   public SyncScheduler syncScheduler() {
-    return null;
+    return syncScheduler;
   }
 
   @Override
   public UtsScheduler utsScheduler() {
-    return null;
+    return utsScheduler;
   }
 
   @Override
@@ -133,6 +142,11 @@ public class SpigotCore implements ImplServer, Listener {
   @Override
   public ClassLoader classLoader() {
     return SpigotCore.class.getClassLoader();
+  }
+
+  @Override
+  public ClassLoader apiClassLoader() {
+    return classLoader().getParent();
   }
 
   @Override

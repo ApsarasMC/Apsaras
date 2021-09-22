@@ -64,7 +64,7 @@ public class SpongeCore implements ImplServer {
   @Inject
   private UtsTasker utsTasker;
   @Inject
-  private SyncTasker syncScheduler;
+  private SyncScheduler syncScheduler;
   @Inject
   private UtsScheduler utsScheduler;
   @Inject
@@ -91,6 +91,16 @@ public class SpongeCore implements ImplServer {
       this.logger().warn("Failed to open plugins dir.", e);
     }
 
+    try {
+      Path pluginsPath = this.gamePath().resolve("mods");
+      Files.createDirectories(pluginsPath);
+      Arrays.stream(
+        Objects.requireNonNull(pluginsPath.toFile().listFiles())
+      ).filter(file -> file.getName().endsWith(".jar")).forEach(file -> Apsaras.pluginManager().addPlugin(file));
+    } catch (Exception e) {
+      this.logger().warn("Failed to open plugins dir.", e);
+    }
+
     this.transfers.register();
     game.enable();
     Sponge.eventManager().registerListener(
@@ -101,25 +111,6 @@ public class SpongeCore implements ImplServer {
         .order(Order.DEFAULT)
         .build()
     );
-    Sponge.eventManager().registerListeners(this.wrapper, this);
-  }
-
-  public static Parameter.Value< Integer > ipParameter;
-  @Listener
-  public void onCommandRegister(final RegisterCommandEvent<Command.Parameterized> event){
-    ipParameter = Parameter.integerNumber().key("aaa").build();
-    event.register(
-      this.wrapper,
-      Command
-        .builder()
-        .addParameter(Parameter.bool().key("cyc").build())
-        .executor((context -> {
-          context.sendMessage(Identity.nil(), Component.text("wwwwwwwwww"));
-          logger().info("{}",context.requireOne(ipParameter));
-          return CommandResult.success();
-        }))
-        .build(),
-      "cccccccccccc");
   }
 
   public org.spongepowered.plugin.PluginContainer wrapper() {
@@ -138,12 +129,12 @@ public class SpongeCore implements ImplServer {
 
   @Override
   public SyncScheduler syncScheduler() {
-    return null;
+    return this.syncScheduler;
   }
 
   @Override
   public UtsScheduler utsScheduler() {
-    return null;
+    return this.utsScheduler;
   }
 
   @Override
@@ -154,6 +145,11 @@ public class SpongeCore implements ImplServer {
   @Override
   public ClassLoader classLoader() {
     return SpongeCore.class.getClassLoader();
+  }
+
+  @Override
+  public ClassLoader apiClassLoader() {
+    return classLoader().getParent();
   }
 
   @Override
@@ -168,7 +164,7 @@ public class SpongeCore implements ImplServer {
 
   @Override
   public String version() {
-    return this.wrapper().metadata().version();
+    return this.wrapper().metadata().version().getQualifier();
   }
 
   @Override

@@ -10,6 +10,7 @@ import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.apsarasmc.apsaras.plugin.PluginDepend;
 import org.apsarasmc.apsaras.plugin.PluginMeta;
 import org.apsarasmc.plugin.ImplServer;
+import org.apsarasmc.plugin.aop.ImplInjector;
 import org.apsarasmc.plugin.dependency.DependencyResolver;
 import org.apsarasmc.plugin.event.lifecycle.ImplPluginLifeEvent;
 import org.apsarasmc.plugin.util.ImplPrefixLogger;
@@ -21,7 +22,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.*;
 
 public class JavaPluginContainer implements PluginContainer {
   private static final Gson gson = new Gson();
@@ -36,6 +37,7 @@ public class JavaPluginContainer implements PluginContainer {
   private JavaPluginLoader pluginLoader;
   private PluginMeta meta;
   private Set< String > components;
+  private Collection< String > apis;
   private Logger logger;
   private Injector injector;
 
@@ -78,9 +80,13 @@ public class JavaPluginContainer implements PluginContainer {
 
   @Override
   public void load() throws Exception {
-    this.pluginLoader = new JavaPluginLoader(jarFile.toURI().toURL(), Apsaras.server().classLoader());
+    this.pluginLoader = new JavaPluginLoader(jarFile.toURI().toURL(), Apsaras.server().classLoader(), Apsaras.server().apiClassLoader());
     loadMeta();
     loadComponents();
+    loadApis();
+    for (String api : apis) {
+      this.pluginLoader.addApi(api);
+    }
     for (PluginDepend depend : this.meta.depends()) {
       if (depend.type().equals(PluginDepend.Type.LIBRARY)) {
         this.pluginLoader.addURL(
@@ -113,6 +119,18 @@ public class JavaPluginContainer implements PluginContainer {
     metaStream.close();
   }
 
+  private void loadApis() throws Exception {
+    InputStream metaStream = this.pluginLoader.getResourceAsStream("META-INF/apis.json");
+    if (metaStream == null) {
+      this.apis = Collections.emptyList();
+    }else{
+      InputStreamReader metaReader = new InputStreamReader(metaStream);
+      this.apis = gson.fromJson(metaReader, List.class);
+      metaReader.close();
+      metaStream.close();
+    }
+  }
+
   @Override
   public void enable() throws Exception {
     this.enable = true;
@@ -121,7 +139,7 @@ public class JavaPluginContainer implements PluginContainer {
     StaticEntryUtil.applyPluginContainer(this.pluginLoader, this);
 
     Class< ? > mainClass = this.pluginLoader.loadClass(this.meta.main());
-    this.injector = Apsaras.injector()
+    this.injector = ((ImplInjector)Apsaras.injector()).handle()
       .createChildInjector(binder -> {
         binder.bind(PluginContainer.class).toInstance(this);
         binder.bind(Logger.class).toInstance(this.logger);
@@ -131,7 +149,7 @@ public class JavaPluginContainer implements PluginContainer {
           logger.warn("Failed to constructor {}'s Module class {}.", this.name(), mainClass.getName());
         }
       });
-    StaticEntryUtil.applyInjector(this.pluginLoader, injector);
+    StaticEntryUtil.applyInjector(this.pluginLoader, new ImplInjector(injector));
     for (String componentName : this.components) {
       Class< ? > componentClass = this.pluginLoader.loadClass(componentName);
       Object component = this.injector.getInstance(componentClass);

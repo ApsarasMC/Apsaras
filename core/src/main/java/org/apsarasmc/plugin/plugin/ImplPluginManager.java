@@ -34,7 +34,7 @@ public class ImplPluginManager implements PluginManager {
 
   @Override
   public void load() {
-    this.load(false);
+    this.load(true);
   }
 
   public void load(boolean ignoreNotApsaras) {

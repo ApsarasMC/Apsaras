@@ -15,7 +15,7 @@ sponge {
     description('Provide apsaras api for sponge')
     links {
       homepage("https://github.com/ApsarasMC")
-      source("https://github.com/ApsarasMC/ApsarasPlugin")
+      source("https://github.com/ApsarasMC/Apsaras")
       issues("https://github.com/ApsarasMC/Apsaras/issues")
     }
     dependency('spongeapi') {
@@ -73,6 +73,8 @@ shadowJar {
 
   exclude 'about.html'
   exclude 'plugin.xml'
+  exclude 'mchange-config-resource-paths.txt'
+  exclude 'checkstyle.xml'
   exclude 'licenses/**'
   exclude 'mozilla/**'
   exclude 'META-INF/maven/**'

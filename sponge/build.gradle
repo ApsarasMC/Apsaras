@@ -9,6 +9,5 @@ dependencies {
   implementation(project(':core'))
   implementation(project(':apsaras'))
 
-  implementation('net.kyori:adventure-platform-spongeapi:4.0.0-SNAPSHOT')
   compileOnly('org.spongepowered:spongeapi:8.0.0-SNAPSHOT')
 }

@@ -1,7 +1,7 @@
 package org.apsarasmc.plugin.util;
 
-import com.google.inject.Injector;
 import org.apsarasmc.apsaras.Apsaras;
+import org.apsarasmc.apsaras.aop.Injector;
 import org.apsarasmc.plugin.plugin.JavaPluginContainer;
 import org.apsarasmc.plugin.util.relocate.PluginContainerEntry;
 

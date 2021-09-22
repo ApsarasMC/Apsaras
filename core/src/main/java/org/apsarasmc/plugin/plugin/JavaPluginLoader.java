@@ -14,18 +14,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class JavaPluginLoader extends URLClassLoader {
-  private static final Collection< String > neverLoadCollection;
-
-  static {
-    Collection< String > neverLoadPrefixes = new ArrayList<>();
-    neverLoadCollection = Collections.unmodifiableCollection(neverLoadPrefixes);
-  }
+  private final Collection< String > apiPrefixes = new ArrayList<>();
 
   private final Collection< ClassLoader > depends = new ArrayList<>();
   private RelocatingRemapper remapper;
+  private final ClassLoader api;
 
-  public JavaPluginLoader(final URL jarPath, final ClassLoader parent) {
+  public JavaPluginLoader(final URL jarPath, final ClassLoader parent, final ClassLoader api) {
     super(new URL[] { jarPath }, parent);
+    this.api = api;
   }
 
   public JavaPluginLoader remapper(RelocatingRemapper remapper) {
@@ -107,14 +104,6 @@ public class JavaPluginLoader extends URLClassLoader {
     }
   }
 
-  protected void checkNeverLoad(final String name) throws ClassNotFoundException {
-    for (String prefix : neverLoadCollection) {
-      if (name.startsWith(prefix)) {
-        throw new ClassNotFoundException(name);
-      }
-    }
-  }
-
   @Nullable
   @Override
   public URL getResource(final String name) {
@@ -138,5 +127,9 @@ public class JavaPluginLoader extends URLClassLoader {
   @Override
   public void addURL(final URL url) {
     super.addURL(url);
+  }
+
+  public void addApi(String api) {
+    this.apiPrefixes.add(api);
   }
 }

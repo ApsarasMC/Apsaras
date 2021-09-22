@@ -2,7 +2,7 @@ package org.apsarasmc.loader.sponge;
 
 import com.google.inject.Inject;
 import org.spongepowered.plugin.PluginContainer;
-import org.spongepowered.plugin.jvm.Plugin;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,6 +19,7 @@ public class SpongeLaunchWrapper extends URLClassLoader {
     parentPrefixes.add("javax");
     parentPrefixes.add("net.kyori.examination");
     parentPrefixes.add("net.kyori.adventure");
+    parentPrefixes.add("org.apsarasmc.apsaras");
     parentPrefixCollection = Collections.unmodifiableCollection(parentPrefixes);
   }
 

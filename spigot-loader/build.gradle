@@ -56,6 +56,8 @@ shadowJar {
 
   exclude 'about.html'
   exclude 'plugin.xml'
+  exclude 'mchange-config-resource-paths.txt'
+  exclude 'checkstyle.xml'
   exclude 'licenses/**'
   exclude 'mozilla/**'
   exclude 'META-INF/maven/**'

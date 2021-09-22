@@ -12,3 +12,6 @@ include 'spigot-loader'
 include 'sponge'
 include 'sponge-loader'
 include 'annotation'
+include 'sponge-legacy'
+include 'sponge-legacy-loader'
+
