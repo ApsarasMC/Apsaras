@@ -2,8 +2,8 @@ package org.apsarasmc.plugin.command;
 
 import net.kyori.adventure.text.Component;
 import org.apsarasmc.apsaras.command.CommandResult;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class ImplCommandResult implements CommandResult {

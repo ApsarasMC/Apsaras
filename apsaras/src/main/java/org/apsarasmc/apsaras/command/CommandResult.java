@@ -3,8 +3,8 @@ package org.apsarasmc.apsaras.command;
 import net.kyori.adventure.text.Component;
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.builder.AbstractBuilder;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public interface CommandResult {
