@@ -1,5 +1,6 @@
 package org.apsarasmc.spigot.entity;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.bossbar.BossBar;
@@ -14,9 +15,9 @@ import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.entity.Player;
 import org.apsarasmc.apsaras.util.ResourceKey;
 import org.apsarasmc.plugin.entity.ImplPlayer;
+import org.apsarasmc.spigot.SpigotCore;
 import org.apsarasmc.spigot.util.KeyUtil;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,14 +27,23 @@ import java.util.UUID;
 
 public class SpigotPlayer implements ImplPlayer {
   @Nonnull
-  private final org.bukkit.entity.Player handle;
+  protected final org.bukkit.entity.Player handle;
 
   @Nonnull
-  private final Audience adventure;
+  protected final Audience adventure;
+
+  public SpigotPlayer(final @Nonnull org.bukkit.entity.Player handle, Audience adventure) {
+    this.handle = handle;
+    this.adventure = Apsaras.injector().getInstance(BukkitAudiences.class).player(this.handle);
+  }
 
   public SpigotPlayer(final @Nonnull org.bukkit.entity.Player handle) {
     this.handle = handle;
-    adventure = Apsaras.injector().getInstance(BukkitAudiences.class).player(this.handle);
+    if(SpigotCore.IS_PAPER) {
+      this.adventure = handle;
+    }else {
+      this.adventure = Apsaras.injector().getInstance(BukkitAudiences.class).player(this.handle);
+    }
   }
 
   @Nonnull
@@ -55,6 +65,26 @@ public class SpigotPlayer implements ImplPlayer {
   @Override
   public boolean isOnline() {
     return handle.isOnline();
+  }
+
+  @Override
+  public String placeholder(ResourceKey key) {
+    try {
+      Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+      if(key.namespace().equals("papi")) {
+        String holders = "%" + key.value() + "%";
+        String result = PlaceholderAPI.setPlaceholders(
+          handle,
+          holders
+        );
+        if (!result.equals(holders)) {
+          return result;
+        }
+      }
+    } catch (ClassNotFoundException e) {
+      //
+    }
+    return key.asString();
   }
 
   @Override
@@ -128,7 +158,7 @@ public class SpigotPlayer implements ImplPlayer {
   }
 
   @Override
-  public @NotNull Identity identity() {
+  public @Nonnull Identity identity() {
     return Identity.identity(handle.getUniqueId());
   }
 

@@ -1,5 +1,6 @@
 import java.net.URI
 plugins {
+  `java`
   `maven-publish`
 }
 
@@ -18,6 +19,11 @@ subprojects {
     mavenLocal()
   }
 
+  tasks.compileJava {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+  }
+
   publishing {
     publications {
       create<MavenPublication>("maven"){
@@ -29,13 +35,13 @@ subprojects {
     }
     repositories {
       mavenLocal()
-      maven {
-        url = URI("https://apsarasmc-maven.pkg.coding.net/repository/apsarasmc/apsaras/")
-        credentials {
-          username = properties["artifactsGradleUsername"] as String
-          password = properties["artifactsGradlePassword"] as String
-        }
-      }
+      //maven {
+      //  url = URI("https://apsarasmc-maven.pkg.coding.net/repository/apsarasmc/apsaras/")
+      //  credentials {
+      //    username = properties["artifactsGradleUsername"] as String
+      //    password = properties["artifactsGradlePassword"] as String
+      //  }
+      //}
     }
   }
 }

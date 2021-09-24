@@ -2,8 +2,6 @@ package org.apsarasmc.spigot.event.message;
 
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.apsarasmc.apsaras.event.EventHandler;
 import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.event.Order;
@@ -13,9 +11,9 @@ import org.apsarasmc.plugin.event.EventTransfer;
 import org.apsarasmc.plugin.setting.ApsarasSetting;
 import org.apsarasmc.spigot.entity.SpigotPlayer;
 import org.apsarasmc.spigot.util.EventUtil;
-import org.apsarasmc.spigot.util.TextComponentUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,12 +31,16 @@ public class MessageTransfer implements EventTransfer {
   @Override
   public void register() {
     eventManager.registerListeners(plugin, this);
-    EventUtil.listen(AsyncPlayerChatEvent.class, event -> new SpigotChatEvent(event, new SpigotPlayer(event.getPlayer())));
+    if(apsarasSetting.enableHandleChatFormatter) {
+      EventUtil.listen(PlayerChatEvent.class, event -> new SpigotSyncChatEvent(event, new SpigotPlayer(event.getPlayer())));
+    }else{
+      EventUtil.listen(AsyncPlayerChatEvent.class, event -> new SpigotAsyncChatEvent(event, new SpigotPlayer(event.getPlayer())));
+    }
   }
 
   @EventHandler (order = Order.POST)
-  public void evalChatEvent(SpigotChatEvent e) {
-    if (e.cancelled() || !apsarasSetting.enableHandleChatFormatter) {
+  public void evalChatEvent(SpigotSyncChatEvent e) {
+    if (e.cancelled()) {
       return;
     }
     Optional< ChatEvent.ChatFormatter > optional = e.chatFormatter();

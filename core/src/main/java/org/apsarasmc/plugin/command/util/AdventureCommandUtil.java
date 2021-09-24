@@ -1,21 +1,24 @@
 package org.apsarasmc.plugin.command.util;
 
+import net.kyori.adventure.text.Component;
 import org.apsarasmc.apsaras.command.*;
 import org.apsarasmc.apsaras.command.exception.ArgumentParseException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AdventureCommandUtil {
   private AdventureCommandUtil() {
     //
   }
 
-  private static List<String> filterPrefix(String prefix, Iterable<String> list){
-    List<String> result = new ArrayList<>();
+  private static List< String > filterPrefix(String prefix, Iterable< String > list) {
+    List< String > result = new ArrayList<>();
     for (String s : list) {
-      if(s.startsWith(prefix)){
+      if (s.startsWith(prefix)) {
         result.add(s);
       }
     }
@@ -28,9 +31,12 @@ public class AdventureCommandUtil {
     CommandSender sender,
     CommandReader reader
   ) throws ArgumentParseException {
+    if (!command.canExecute(sender)) {
+      return CommandResult.error(Component.text("Failed to pass checker."));
+    }
     String first = reader.getString();
     Command.Adventure subcommand = command.subcommands().get(first);
-    if(subcommand != null){
+    if (subcommand != null) {
       reader.readString();
       return execute(subcommand, context, sender, reader);
     }
@@ -45,47 +51,58 @@ public class AdventureCommandUtil {
     }
   }
 
-  public static List<String> complete(
+  public static List< String > complete(
     Command.Adventure command,
     CommandSender sender,
     CommandReader reader
   ) {
+    if (!command.canExecute(sender)) {
+      return Collections.emptyList();
+    }
     String first = reader.getString();
     int remain = reader.remain();
     Command.Adventure subcommand = command.subcommands().get(first);
-    if(subcommand != null){
+    if (subcommand != null) {
       reader.readString();
       return complete(subcommand, sender, reader);
     }
 
-    List<String> complete = tab(reader, command.arguments());
-    if(complete == null || !reader.ended()){
+    List< String > complete = tab(reader, command.arguments());
+    if (complete == null || !reader.ended()) {
       complete = Collections.emptyList();
     }
 
-    if(first.length() == remain) {
+    if (first.length() == remain) {
       complete = new ArrayList<>(complete);
-      complete.addAll(filterPrefix(first, command.subcommands().keySet()));
+      complete.addAll(
+        filterPrefix(
+          first,
+          command.subcommands().entrySet().stream().filter(
+              entry -> entry.getValue().canExecute(sender)
+            )
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList())
+        ));
     }
     return complete;
   }
 
-  private static List<String> tab(CommandReader reader, List< CommandArgument > arguments) {
-    List<String> complete = null;
-    List<String> pComplete = null;
+  private static List< String > tab(CommandReader reader, List< CommandArgument > arguments) {
+    List< String > complete = null;
+    List< String > pComplete = null;
     for (CommandArgument argument : arguments) {
-      pComplete = tab(reader,argument.requires());
+      pComplete = tab(reader, argument.requires());
       if (pComplete != null) {
         complete = pComplete;
       }
-      if(reader.ended()){
+      if (reader.ended()) {
         return complete;
       }
       pComplete = argument.tabComplete(reader);
       if (pComplete != null) {
         complete = pComplete;
       }
-      if(reader.ended()){
+      if (reader.ended()) {
         return complete;
       }
     }

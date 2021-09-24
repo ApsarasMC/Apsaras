@@ -11,16 +11,18 @@ import net.kyori.adventure.title.Title;
 import org.apsarasmc.apsaras.entity.Player;
 import org.apsarasmc.apsaras.util.ResourceKey;
 import org.apsarasmc.plugin.entity.ImplPlayer;
+import org.apsarasmc.sponge.util.ComponentUtil;
 import org.apsarasmc.sponge.util.ResourceKeyUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.placeholder.PlaceholderContext;
+import org.spongepowered.api.registry.RegistryKey;
 import org.spongepowered.api.registry.RegistryTypes;
 
 import javax.annotation.Nonnull;
 import javax.inject.Singleton;
 import java.util.Optional;
-import java.util.UUID;
 
 public class SpongePlayer implements ImplPlayer {
   public final ServerPlayer handle;
@@ -36,6 +38,24 @@ public class SpongePlayer implements ImplPlayer {
   @Override
   public boolean isOnline() {
     return handle.isOnline();
+  }
+
+  @Override
+  public String placeholder(ResourceKey key) {
+    try {
+      return ComponentUtil.serialize(
+        RegistryKey.of(
+          RegistryTypes.PLACEHOLDER_PARSER,
+          ResourceKeyUtil.to(key)
+        )
+        .asDefaultedReference(Sponge::game)
+        .get()
+        .parse(
+          PlaceholderContext.builder().associatedObject(handle).build()
+        ));
+    }catch (Exception e){
+      return key.asString();
+    }
   }
 
   @Override

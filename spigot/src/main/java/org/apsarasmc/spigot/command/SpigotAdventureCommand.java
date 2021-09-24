@@ -28,7 +28,14 @@ public class SpigotAdventureCommand extends org.bukkit.command.Command{
       CommandSender sender = CommandSenderUtil.transfer(spigotSender);
       CommandReader reader = new ImplCommandReader(String.join(" ",args));
       CommandContext context = new ImplCommandContext(sender, new HashMap<>());
-      return AdventureCommandUtil.execute(handle, context, sender, reader).isSuccess();
+      CommandResult result = AdventureCommandUtil.execute(handle, context, sender, reader);
+      if(result.isSuccess()){
+        return true;
+      }
+      if(result.errorMessage().isPresent()){
+        sender.sendMessage(result.errorMessage().get());
+      }
+      return false;
     }catch (ArgumentParseException e) {
       Apsaras.server().logger().info("Failed to invoke command.", e);
     }

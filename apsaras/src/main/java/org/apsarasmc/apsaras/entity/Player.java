@@ -2,6 +2,7 @@ package org.apsarasmc.apsaras.entity;
 
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.command.CommandSender;
+import org.apsarasmc.apsaras.util.ResourceKey;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -13,6 +14,8 @@ public interface Player extends Entity, CommandSender , PermissionCheckable{
   }
 
   boolean isOnline();
+
+  String placeholder(ResourceKey key);
 
   interface Factory {
     Optional< Player > byName(@Nonnull String name);

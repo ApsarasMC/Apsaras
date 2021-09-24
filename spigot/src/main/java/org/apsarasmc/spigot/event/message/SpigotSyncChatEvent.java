@@ -4,19 +4,20 @@ import org.apsarasmc.apsaras.entity.Player;
 import org.apsarasmc.apsaras.event.EventContext;
 import org.apsarasmc.apsaras.event.message.ChatEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class SpigotChatEvent implements ChatEvent {
-  public final AsyncPlayerChatEvent handle;
+public class SpigotSyncChatEvent implements ChatEvent {
+  public final PlayerChatEvent handle;
   private final EventContext context = EventContext.builder().build();
   private final Player sender;
   private final String originalMessage;
   private Optional< ChatEvent.ChatFormatter > chatFormatter = Optional.empty();
 
-  public SpigotChatEvent(AsyncPlayerChatEvent handle, Player sender) {
+  public SpigotSyncChatEvent(PlayerChatEvent handle, Player sender) {
     this.handle = handle;
     this.sender = sender;
     this.originalMessage = handle.getMessage();

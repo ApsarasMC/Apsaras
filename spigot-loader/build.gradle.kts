@@ -13,6 +13,10 @@ repositories {
     name = "spigotmc-repo"
     url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
   }
+  maven {
+    name = "extendedclip"
+    url = URI("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+  }
 }
 
 dependencies {

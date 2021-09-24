@@ -16,6 +16,8 @@ import org.apsarasmc.apsaras.util.ResourceKey;
 import org.apsarasmc.plugin.entity.ImplPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.text.placeholder.PlaceholderContext;
+import org.spongepowered.api.text.placeholder.PlaceholderParser;
 
 import javax.annotation.Nonnull;
 import javax.inject.Singleton;
@@ -38,6 +40,18 @@ public class SpongePlayer implements ImplPlayer {
   @Override
   public boolean isOnline() {
     return handle.isOnline();
+  }
+
+  @Override
+  public String placeholder(ResourceKey key) {
+    try {
+      return Sponge.getRegistry().getType(PlaceholderParser.class, key.value())
+        .get().parse(
+          PlaceholderContext.builder().setAssociatedObject(handle).build()
+        ).toPlain();
+    }catch (Exception e){
+      return key.asString();
+    }
   }
 
   @Override

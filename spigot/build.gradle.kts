@@ -6,8 +6,12 @@ repositories {
     url = URI("https://oss.sonatype.org/content/repositories/snapshots/")
   }
   maven {
-    name = "spigotmc-repo"
-    url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    name = "extendedclip"
+    url = URI("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+  }
+  maven {
+    name = "papermc-repo"
+    url = URI("https://papermc.io/repo/repository/maven-public/")
   }
 }
 
@@ -18,7 +22,7 @@ dependencies {
   implementation("net.kyori:adventure-platform-bungeecord:4.0.0")
   implementation("org.slf4j:slf4j-jcl:1.7.32")
 
-  compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT") {
+  compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT"){
     exclude(
       mapOf(
         Pair("group", "com.google.guava"),
@@ -41,6 +45,15 @@ dependencies {
       mapOf(
         Pair("group", "org.yaml"),
         Pair("module", "snakeyaml"),
+      )
+    )
+  }
+
+  compileOnly("me.clip:placeholderapi:2.10.9") {
+    exclude(
+      mapOf(
+        Pair("group", "org.bstats"),
+        Pair("module", "bstats-bukkit"),
       )
     )
   }

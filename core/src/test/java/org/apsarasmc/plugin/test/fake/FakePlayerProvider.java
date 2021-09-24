@@ -48,6 +48,11 @@ public class FakePlayerProvider implements Provider< Player > {
       }
 
       @Override
+      public String placeholder(ResourceKey key) {
+        return key.asString();
+      }
+
+      @Override
       public void sendMessage(@Nonnull Identity source, @Nonnull Component message, @Nonnull MessageType type) {
         Apsaras.server().logger().info("{} received message : {}",name,message);
       }

@@ -1,6 +1,6 @@
 name: apsaras
 version: 1.2-SNAPSHOT
 main: org.apsarasmc.loader.spigot.SpigotLaunchWrapper
-softdepend: [ ]
+softdepend: [ PlaceholderAPI ]
 authors: [ InkerBot ]
 load: STARTUP

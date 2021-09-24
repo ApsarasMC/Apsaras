@@ -27,9 +27,11 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 
 public class SpigotCore implements ImplServer, Listener {
+  public final static boolean IS_PAPER = Bukkit.getName().toLowerCase().contains("paper");
   private static final RelocatingRemapper remapper = new RelocatingRemapper(
     ImmutableList.< Relocation >builder()
       .add(new Relocation("org{}sonatype{}inject", "org{}apsarasmc{}libs{}sonatype{}inject"))
@@ -77,7 +79,9 @@ public class SpigotCore implements ImplServer, Listener {
     new ImplGame(new SpigotModule(binder -> {
       binder.bind(ImplServer.class).toInstance(this);
       binder.bind(SpigotCore.class).toInstance(this);
-      binder.bind(BukkitAudiences.class).toInstance(BukkitAudiences.create(this.wrapper));
+      if(!IS_PAPER){
+        binder.bind(BukkitAudiences.class).toInstance(BukkitAudiences.create(this.wrapper));
+      }
     }));
     Apsaras.injector().injectMembers(this);
 
