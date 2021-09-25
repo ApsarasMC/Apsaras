@@ -5,6 +5,7 @@ import kotlin.Unit;
 import org.apsarasmc.apsaras.event.EventListener;
 import org.apsarasmc.apsaras.event.*;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
+import org.apsarasmc.plugin.util.SyncTaskerUtil;
 
 import javax.inject.Singleton;
 import java.lang.reflect.AccessibleObject;
@@ -44,12 +45,16 @@ public class ImplEventManager implements EventManager {
   }
 
   public < T extends Event > void registerListener(PluginContainer plugin, StaticClass eventClass, EventListener< T > listener) {
-    registerListener(plugin, (Class< T >) eventClass.getRepresentedClass(), listener);
+    registerListener(plugin, (Class< T >) eventClass.getRepresentedClass(), SyncTaskerUtil.sync(listener));
   }
 
   @Override
   public < T extends Event > void registerListener(PluginContainer plugin, Class< T > eventClass, Order order, EventListener< T > listener) {
     this.registerListener(plugin, eventClass, order, false, listener);
+  }
+
+  public < T extends Event > void registerListener(PluginContainer plugin, StaticClass eventClass, Order order, EventListener< T > listener) {
+    registerListener(plugin, (Class< T >) eventClass.getRepresentedClass(), order, SyncTaskerUtil.sync(listener));
   }
 
   @Override
@@ -62,6 +67,10 @@ public class ImplEventManager implements EventManager {
         listenerStruct.listenerEvents().add(v);
         linkedHandlers.get(v).add(listenerStruct);
       });
+  }
+
+  public < T extends Event > void registerListener(PluginContainer plugin, StaticClass eventClass, Order order, boolean beforeModifications, EventListener< T > listener) {
+    registerListener(plugin, (Class< T >) eventClass.getRepresentedClass(), order, beforeModifications, SyncTaskerUtil.sync(listener));
   }
 
   @Override

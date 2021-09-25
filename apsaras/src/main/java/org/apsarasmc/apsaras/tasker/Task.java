@@ -19,5 +19,5 @@ public interface Task< T > {
 
   boolean hasException();
 
-  T getWithException() throws Throwable;
+  T getWithException() throws Exception;
 }

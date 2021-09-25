@@ -65,11 +65,11 @@ public class CompletableFutureTask< T > implements Task< T > {
   }
 
   @Override
-  public T getWithException() throws Throwable {
+  public T getWithException() throws Exception {
     try {
       return completableFuture.get();
     } catch (ExecutionException e) {
-      throw e.getCause();
+      throw (Exception) e.getCause();
     }
   }
 }
