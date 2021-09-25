@@ -1,5 +1,7 @@
 package org.apsarasmc.plugin.event;
 
+import jdk.dynalink.beans.StaticClass;
+import kotlin.Unit;
 import org.apsarasmc.apsaras.event.EventListener;
 import org.apsarasmc.apsaras.event.*;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
@@ -22,7 +24,7 @@ public class ImplEventManager implements EventManager {
   @SuppressWarnings ({ "unchecked" })
   public void registerListeners(PluginContainer plugin, Object obj) {
     Arrays.stream(obj.getClass().getMethods())
-      .filter(method -> method.getReturnType().equals(void.class))
+      .filter(method -> method.getReturnType().equals(void.class) || method.getReturnType().equals(Unit.class))
       .filter(method -> Modifier.isPublic(Modifier.methodModifiers()))
       .filter(method -> method.getAnnotation(EventHandler.class) != null)
       .filter(method -> method.getParameters().length == 1)
@@ -35,9 +37,14 @@ public class ImplEventManager implements EventManager {
       });
   }
 
+  //
   @Override
   public < T extends Event > void registerListener(PluginContainer plugin, Class< T > eventClass, EventListener< T > listener) {
     this.registerListener(plugin, eventClass, Order.DEFAULT, listener);
+  }
+
+  public < T extends Event > void registerListener(PluginContainer plugin, StaticClass eventClass, EventListener< T > listener) {
+    registerListener(plugin, (Class< T >) eventClass.getRepresentedClass(), listener);
   }
 
   @Override

@@ -11,23 +11,18 @@ import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
-public class JavaPluginLoader extends URLClassLoader {
+public class ImplPluginLoader extends URLClassLoader {
   private final Collection< String > apiPrefixes = new ArrayList<>();
 
   private final Collection< ClassLoader > depends = new ArrayList<>();
-  private RelocatingRemapper remapper;
+  private final RelocatingRemapper remapper;
   private final ClassLoader api;
 
-  public JavaPluginLoader(final URL jarPath, final ClassLoader parent, final ClassLoader api) {
-    super(new URL[] { jarPath }, parent);
+  public ImplPluginLoader(final URL[] urls, final ClassLoader parent, final ClassLoader api, RelocatingRemapper remapper) {
+    super(urls, parent);
     this.api = api;
-  }
-
-  public JavaPluginLoader remapper(RelocatingRemapper remapper) {
     this.remapper = remapper;
-    return this;
   }
 
   public RelocatingRemapper remapper() {

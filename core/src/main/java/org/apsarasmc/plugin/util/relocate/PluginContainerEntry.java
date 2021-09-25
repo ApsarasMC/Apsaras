@@ -1,20 +1,21 @@
 package org.apsarasmc.plugin.util.relocate;
 
+import org.apsarasmc.plugin.plugin.ImplPluginContainer;
 import org.apsarasmc.plugin.plugin.JavaPluginContainer;
-import org.apsarasmc.plugin.plugin.JavaPluginLoader;
+import org.apsarasmc.plugin.plugin.ImplPluginLoader;
 
 public class PluginContainerEntry {
-  private static JavaPluginContainer container;
+  private static ImplPluginContainer container;
 
   private PluginContainerEntry() {
     //
   }
 
-  public static JavaPluginContainer container() {
+  public static ImplPluginContainer container() {
     return container;
   }
 
-  public static JavaPluginLoader pluginLoader() {
+  public static ImplPluginLoader pluginLoader() {
     return container().pluginLoader();
   }
 

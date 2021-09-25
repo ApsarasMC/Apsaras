@@ -1,5 +1,6 @@
 plugins {
   id("java-library")
+  kotlin("jvm") version "1.5.10"
 }
 
 dependencies {
@@ -19,6 +20,7 @@ dependencies {
   }
   api("com.google.code.gson:gson:2.8.8")
   api("org.yaml:snakeyaml:1.29")
+  api("org.openjdk.nashorn:nashorn-core:15.3")
 
   compileOnly("com.google.code.findbugs:jsr305:3.0.2")
 

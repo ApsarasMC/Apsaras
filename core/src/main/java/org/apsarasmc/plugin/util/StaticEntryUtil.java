@@ -2,6 +2,7 @@ package org.apsarasmc.plugin.util;
 
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.aop.Injector;
+import org.apsarasmc.plugin.plugin.ImplPluginContainer;
 import org.apsarasmc.plugin.plugin.JavaPluginContainer;
 import org.apsarasmc.plugin.util.relocate.PluginContainerEntry;
 
@@ -34,7 +35,7 @@ public class StaticEntryUtil {
     }
   }
 
-  public static void applyPluginContainer(ClassLoader classLoader, JavaPluginContainer pluginContainer) {
+  public static void applyPluginContainer(ClassLoader classLoader, ImplPluginContainer pluginContainer) {
     try {
       Class< ? > clazz = classLoader.loadClass(REMAP_ENTRY_CLASS);
       Field gameField = clazz.getDeclaredField("container");

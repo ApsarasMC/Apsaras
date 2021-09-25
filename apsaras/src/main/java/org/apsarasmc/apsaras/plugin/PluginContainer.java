@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
 public interface PluginContainer extends Named {
-  @Nonnull
+
   PluginMeta meta();
 
   Logger logger();

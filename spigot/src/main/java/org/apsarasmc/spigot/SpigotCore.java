@@ -90,7 +90,7 @@ public class SpigotCore implements ImplServer, Listener {
       Files.createDirectories(pluginsPath);
       Arrays.stream(
         Objects.requireNonNull(pluginsPath.toFile().listFiles())
-      ).filter(file -> file.getName().endsWith(".jar")).forEach(file -> Apsaras.pluginManager().addPlugin(file));
+      ).forEach(file -> Apsaras.pluginManager().addPlugin(file));
     } catch (Exception e) {
       this.logger().warn("Failed to open plugins dir.", e);
     }
@@ -100,7 +100,7 @@ public class SpigotCore implements ImplServer, Listener {
       Files.createDirectories(pluginsPath);
       Arrays.stream(
         Objects.requireNonNull(pluginsPath.toFile().listFiles())
-      ).filter(file -> file.getName().endsWith(".jar")).forEach(file -> Apsaras.pluginManager().addPlugin(file));
+      ).forEach(file -> Apsaras.pluginManager().addPlugin(file));
     } catch (Exception e) {
       this.logger().warn("Failed to open plugins dir.", e);
     }

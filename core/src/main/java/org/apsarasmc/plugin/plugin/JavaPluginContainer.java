@@ -1,30 +1,29 @@
 package org.apsarasmc.plugin.plugin;
 
 import com.google.gson.Gson;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.apsarasmc.apsaras.Apsaras;
 import org.apsarasmc.apsaras.event.EventManager;
 import org.apsarasmc.apsaras.plugin.PluginContainer;
 import org.apsarasmc.apsaras.plugin.PluginDepend;
-import org.apsarasmc.apsaras.plugin.PluginMeta;
 import org.apsarasmc.plugin.ImplServer;
 import org.apsarasmc.plugin.aop.ImplInjector;
 import org.apsarasmc.plugin.dependency.DependencyResolver;
 import org.apsarasmc.plugin.event.lifecycle.ImplPluginLifeEvent;
-import org.apsarasmc.plugin.util.ImplPrefixLogger;
 import org.apsarasmc.plugin.util.StaticEntryUtil;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public class JavaPluginContainer implements PluginContainer {
+public class JavaPluginContainer extends ImplPluginContainer {
   private static final Gson gson = new Gson();
   private final File jarFile;
   @Inject
@@ -33,12 +32,9 @@ public class JavaPluginContainer implements PluginContainer {
   private EventManager eventManager;
   @Inject
   private ImplServer server;
-  private boolean enable = false;
-  private JavaPluginLoader pluginLoader;
-  private PluginMeta meta;
+  private ImplPluginLoader pluginLoader;
   private Set< String > components;
   private Collection< String > apis;
-  private Logger logger;
   private Injector injector;
 
   public JavaPluginContainer(final @Nonnull File jarFile) {
@@ -47,31 +43,8 @@ public class JavaPluginContainer implements PluginContainer {
   }
 
   @Override
-  public @Nonnull
-  PluginMeta meta() {
-    return this.meta;
-  }
-
-  public JavaPluginLoader pluginLoader() {
+  public ImplPluginLoader pluginLoader() {
     return pluginLoader;
-  }
-
-  @Override
-  public Logger logger() {
-    return this.logger;
-  }
-
-  @Override
-  public void addDepend(final @Nonnull PluginContainer depend) {
-    if (!(depend instanceof JavaPluginContainer)) {
-      throw new IllegalArgumentException("Only java plugin could depend on.");
-    }
-    this.pluginLoader.addDepend(((JavaPluginContainer) depend).pluginLoader);
-  }
-
-  @Override
-  public boolean enabled() {
-    return this.enable;
   }
 
   public Injector injector() {
@@ -80,14 +53,27 @@ public class JavaPluginContainer implements PluginContainer {
 
   @Override
   public void load() throws Exception {
-    this.pluginLoader = new JavaPluginLoader(jarFile.toURI().toURL(), Apsaras.server().classLoader(), Apsaras.server().apiClassLoader());
-    loadMeta();
+    this.pluginLoader = new ImplPluginLoader(
+      new URL[]{},
+      Apsaras.server().classLoader(),
+      Apsaras.server().apiClassLoader(),
+      server.remapper()
+    );
+    InputStream metaStream = this.pluginLoader.getResourceAsStream("META-INF/apsaras.json");
+    if (metaStream == null) {
+      throw new FileNotFoundException("No apsaras.json found in " + jarFile);
+    }
+    loadMeta(new InputStreamReader(metaStream));
+    metaStream.close();
+
     loadComponents();
+
     loadApis();
+
     for (String api : apis) {
       this.pluginLoader.addApi(api);
     }
-    for (PluginDepend depend : this.meta.depends()) {
+    for (PluginDepend depend : meta().depends()) {
       if (depend.type().equals(PluginDepend.Type.LIBRARY)) {
         this.pluginLoader.addURL(
           dependencyResolver.getDependencyFile(depend.name()).toURI().toURL()
@@ -95,17 +81,6 @@ public class JavaPluginContainer implements PluginContainer {
       }
     }
     eventManager.post(new ImplPluginLifeEvent.Load(this));
-  }
-
-  private void loadMeta() throws Exception {
-    InputStream metaStream = this.pluginLoader.getResourceAsStream("META-INF/apsaras.json");
-    if (metaStream == null) {
-      throw new FileNotFoundException("No META-INF/apsaras.json found in " + jarFile);
-    }
-    InputStreamReader metaReader = new InputStreamReader(metaStream);
-    this.meta = gson.fromJson(metaReader, ImplPluginMeta.class);
-    metaReader.close();
-    metaStream.close();
   }
 
   private void loadComponents() throws Exception {
@@ -133,20 +108,18 @@ public class JavaPluginContainer implements PluginContainer {
 
   @Override
   public void enable() throws Exception {
-    this.enable = true;
-    this.logger = new ImplPrefixLogger(Apsaras.server().logger(), "[" + this.name() + "]: ");
-    this.pluginLoader.remapper(server.remapper());
+    super.enable();
     StaticEntryUtil.applyPluginContainer(this.pluginLoader, this);
 
-    Class< ? > mainClass = this.pluginLoader.loadClass(this.meta.main());
+    Class< ? > mainClass = this.pluginLoader.loadClass(meta().main());
     this.injector = ((ImplInjector)Apsaras.injector()).handle()
       .createChildInjector(binder -> {
         binder.bind(PluginContainer.class).toInstance(this);
-        binder.bind(Logger.class).toInstance(this.logger);
+        binder.bind(Logger.class).toInstance(logger());
         try {
           ((Module) mainClass.getConstructor().newInstance()).configure(binder);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-          logger.warn("Failed to constructor {}'s Module class {}.", this.name(), mainClass.getName());
+          logger().warn("Failed to constructor {}'s Module class {}.", this.name(), mainClass.getName());
         }
       });
     StaticEntryUtil.applyInjector(this.pluginLoader, new ImplInjector(injector));
@@ -171,7 +144,7 @@ public class JavaPluginContainer implements PluginContainer {
         Files.createDirectories(dataPath);
       }
     } catch (IOException e) {
-      logger.warn("Failed to create data directory for " + this.name() + ".", e);
+      logger().warn("Failed to create data directory for " + this.name() + ".", e);
     }
     return dataPath;
   }
@@ -184,15 +157,9 @@ public class JavaPluginContainer implements PluginContainer {
         Files.createDirectories(dataPath);
       }
     } catch (IOException e) {
-      logger.warn("Failed to create config directory for " + this.name() + ".", e);
+      logger().warn("Failed to create config directory for " + this.name() + ".", e);
     }
     return server.pluginPath().resolve("config").resolve(this.name());
-  }
-
-  @Override
-  public @Nonnull
-  String name() {
-    return this.meta == null ? this.jarFile.getName() : this.meta.name();
   }
 
   @Override

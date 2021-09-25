@@ -30,4 +30,9 @@ public class SpongeSyncTasker implements org.apsarasmc.apsaras.tasker.SyncTasker
     );
     return new CompletableFutureTask<>(plugin, completableFuture);
   }
+
+  @Override
+  public boolean isSyncThread() {
+    return Sponge.server().onMainThread();
+  }
 }

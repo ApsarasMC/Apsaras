@@ -24,4 +24,9 @@ public class SpigotSyncTasker implements org.apsarasmc.apsaras.tasker.SyncTasker
     Bukkit.getScheduler().runTaskLater(core.wrapper(), RunnableUtil.runnable(command, completableFuture), timeUnit.toMillis(delay) / 50);
     return new CompletableFutureTask<>(plugin, completableFuture);
   }
+
+  @Override
+  public boolean isSyncThread() {
+    return Bukkit.getServer().isPrimaryThread();
+  }
 }

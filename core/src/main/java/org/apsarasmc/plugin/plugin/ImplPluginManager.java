@@ -22,8 +22,11 @@ public class ImplPluginManager implements PluginManager {
 
   @Override
   public void addPlugin(File pluginFile) {
-    if (pluginFile.getName().endsWith(".jar")) {
+    if (pluginFile.isFile() && pluginFile.getName().endsWith(".jar")) {
       this.addPlugin(new JavaPluginContainer(pluginFile));
+    }
+    if (pluginFile.isDirectory()) {
+      this.addPlugin(new JsPluginContainer(pluginFile));
     }
   }
 

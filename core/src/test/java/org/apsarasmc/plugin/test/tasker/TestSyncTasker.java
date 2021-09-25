@@ -14,4 +14,9 @@ public class TestSyncTasker extends ImplTasker implements SyncTasker {
   public TestSyncTasker(@Nonnull ApsarasPluginContainer plugin) {
     super(plugin, 1, "sync");
   }
+
+  @Override
+  public boolean isSyncThread() {
+    return true;
+  }
 }
